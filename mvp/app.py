@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 from flask import abort, jsonify, Flask, request
 from oauth2client import client, crypt
+import platform
 
 app = Flask(__name__)
 
 
 @app.route("/health")
 def health():
-    return jsonify(status="UP")
+    return jsonify(status="UP", host=platform.node())
 
 
 @app.route("/auth/token-auth", methods=["POST"])
