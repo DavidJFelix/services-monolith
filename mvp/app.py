@@ -42,7 +42,7 @@ def not_found_error():
 
 
 @app.errorhandler(500)
-def internal_server_error(500)
+def internal_server_error():
     return jsonify(error=500), 500
 
 
