@@ -9,7 +9,12 @@ app = Flask(__name__)
 
 @app.route("/health")
 def health():
-    return jsonify(status="UP", fullyQualifiedDomainName=socket.getfqdn(), node=platform.node())
+    resp = {
+        'status': 'UP',
+        'fullyQualifiedDomainName': socket.getfqdn(),
+        'node': platform.node(),
+    }
+    return jsonify(**resp)
 
 
 @app.route("/auth/token-auth", methods=["POST"])
