@@ -6,8 +6,15 @@ import socket
 
 app = Flask(__name__)
 
+@app.route("/", methods=["GET"])
+def hateos_index():
+    resp = {
+        'healthcheck_url': request.base_url + '/health',
+    }
+    return jsonify(**resp)
+        
 
-@app.route("/health")
+@app.route("/health", methods=["GET"])
 def health():
     resp = {
         'status': 'UP',
