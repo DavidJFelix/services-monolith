@@ -39,17 +39,17 @@ def token_auth():
 
 
 @app.errorhandler(401)
-def not_authorized_error():
+def not_authorized_error(*_):
     return jsonify(error=401), 401
 
 
 @app.errorhandler(404)
-def not_found_error():
+def not_found_error(*_):
     return jsonify(error=404), 404
 
 
 @app.errorhandler(500)
-def internal_server_error():
+def internal_server_error(*_):
     return jsonify(error=500), 500
 
 
