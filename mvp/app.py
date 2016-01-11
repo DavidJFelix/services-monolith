@@ -9,7 +9,7 @@ app = Flask(__name__)
 @app.route("/", methods=["GET"])
 def hateos_index():
     resp = {
-        'healthcheck_url': request.base_url + '/health',
+        'healthcheck_url': request.base_url + 'health',
     }
     return jsonify(**resp)
         
