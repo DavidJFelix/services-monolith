@@ -1,13 +1,21 @@
 #!/usr/bin/env python
 from flask import abort, jsonify, Flask, request
 from oauth2client import client, crypt
+from sqlalchemy import create_engine, MetaData, Table
 import platform
 import socket
 
+
 app = Flask(__name__)
+engine = create_engine('postgresql://dev:password@ds-dev.clqblfd0mdpm.us-east-1.rds.amazonaws.com:5432/dev')
+metadata = MetaData(bind=engine)
+users = Table('users', metadata, autoload=True)
+oauth_providers = Table('oauth_providers', metadata, autoload=True)
+oauth_claims = Table('oauth_claims', metadata, autoload=True)
+
 
 @app.route("/", methods=["GET"])
-def hateos_index():
+def handle_hateos_index():
     resp = {
         'healthcheck_url': request.base_url + 'health',
     }
@@ -15,13 +23,31 @@ def hateos_index():
         
 
 @app.route("/health", methods=["GET"])
-def health():
+def handle_health():
     resp = {
         'status': 'UP',
         'fullyQualifiedDomainName': socket.getfqdn(),
         'node': platform.node(),
     }
     return jsonify(**resp)
+
+
+@app.route("/user", methods=["GET", "POST"])
+def handle_user():
+    resp = {
+        'id': '8ad0e654-f569-43f5-83d0-97d040016943',
+    }
+    # Return NOT IMPLEMENTED
+    return jsonify(**resp), 501
+
+
+@app.route("/address" methods=["GET", "POST"])
+def handle_address():
+    resp = {
+        'id': '8ad0e654-f569-43f5-83d0-97d040016943',
+    }
+    # Return NOT IMPLEMENTED
+    return jsonify(**resp), 501
 
 
 @app.route("/auth/token-auth", methods=["POST"])
@@ -42,21 +68,26 @@ def token_auth():
         abort(401)
 
     #TODO: Need to actually do something if the auth works
-    pass
+    resp = {
+        "token": {
+            "type" "bearer"
+        }
+    }
+    return jsonify(**resp), 501
 
 
 @app.errorhandler(401)
-def not_authorized_error(*_):
+def handle_not_authorized_error(*_):
     return jsonify(error=401), 401
 
 
 @app.errorhandler(404)
-def not_found_error(*_):
+def handle_not_found_error(*_):
     return jsonify(error=404), 404
 
 
 @app.errorhandler(500)
-def internal_server_error(*_):
+def handle_internal_server_error(*_):
     return jsonify(error=500), 500
 
 

@@ -1,3 +1,5 @@
 flask
 oauth2client
 pycrypto
+sqlalchemy
+psychopg2
