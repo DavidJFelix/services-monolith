@@ -4,7 +4,7 @@ from tornado.web import Application
 import rethinkdb as rdb
 
 from .api import APIHandler
-from .user import UserHandler
+from .user import UserHandler, UserByTokenHandler
 from .address import AddressHandler
 from .auth import AuthHandler
 from .diag import HealthHandler, InfoHandler
