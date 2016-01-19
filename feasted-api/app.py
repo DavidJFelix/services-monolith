@@ -2,11 +2,22 @@
 from tornado.ioloop import IOLoop
 from tornado.web import Application
 
+from .api import APIHandler
+from .user import UserHandler
+from .address import AddressHandler
+from .auth import AuthHandler
+from .diag import HealthHandler, InfoHandler
+
 
 def main():
     routes = [
         (r'/', APIHandler),
-        (r'/cards', CardHandler),
+        (r'/health', HealthHandler),
+        (r'/info', InfoHandler),
+        (r'/user', UserHandler),
+        (r'/user/by-token', UserHandler),
+        (r'/address', AddressHandler),
+        (r'/auth/token-auth', AuthHandler),
     ]
     application = Application(routes)
     application.listen(5000)
