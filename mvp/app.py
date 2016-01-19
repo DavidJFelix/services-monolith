@@ -35,14 +35,6 @@ def handle_health():
     return jsonify(**resp)
 
 
-@app.route("/address", methods=["GET", "POST"])
-def handle_address():
-    resp = {
-        'id': '8ad0e654-f569-43f5-83d0-97d040016943',
-    }
-    # Return NOT IMPLEMENTED
-    return jsonify(**resp), 501
-
 
 @app.route("/auth/token-auth", methods=["POST"])
 def handle_token_auth():
@@ -127,36 +119,4 @@ def handle_token_user():
     }
     return jsonify(**resp), 501
 
-
-@app.route("/user", methods=["GET", "POST"])
-def handle_user():
-    resp = {
-        'id': '8ad0e654-f569-43f5-83d0-97d040016943',
-    }
-    # Return NOT IMPLEMENTED
-    return jsonify(**resp), 501
-
-
-@app.errorhandler(401)
-def handle_not_authorized_error(*_):
-    return jsonify(error=401), 401
-
-
-@app.errorhandler(404)
-def handle_not_found_error(*_):
-    return jsonify(error=404), 404
-
-
-@app.errorhandler(405)
-def handle_method_not_allowed_error(*_):
-    return jsonify(error=405), 405
-
-
-@app.errorhandler(500)
-def handle_internal_server_error(*_):
-    return jsonify(error=500), 500
-
-
-if __name__ == "__main__":
-    app.run()
 
