@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from tornado.ioloop import IOLoop
 from tornado.web import Application
+import rethinkdb as rdb
 
 from .api import APIHandler
 from .user import UserHandler
@@ -25,10 +26,14 @@ class FeastedAPIApplication(Application):
         }
         # FIXME: this should change for python3 (lower verbosity)... I think
         super(Application, self).__init__(routes, **settings)
-        # TODO: setup db here
+        rdb.set_loop("tornado")
+        # Tornado Future returned below
+        self.db_conn = rdb.connect(host='localhost', port=28015)
+        
+
 
 def main():
-    application = FeastedAPIApplication(routes)
+    application = FeastedAPIApplication()
     application.listen(5000)
     IOLoop.configure('tornado.platform.asyncio.AsyncIOLoop')
     IOLoop.current().start()
