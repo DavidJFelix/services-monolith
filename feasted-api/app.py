@@ -1,13 +1,16 @@
 #!/usr/bin/env python
+import uuid
+from datetime import datetime
+
+import rethinkdb as rdb
 from tornado.ioloop import IOLoop
 from tornado.web import Application
-import rethinkdb as rdb
 
-from .api import APIHandler
-from .user import UserHandler, UserByTokenHandler
 from .address import AddressHandler
+from .api import APIHandler
 from .auth import AuthHandler
 from .diag import HealthHandler, InfoHandler
+from .user import UserHandler, UserByTokenHandler
 
 
 class FeastedAPIApplication(Application):
@@ -25,8 +28,10 @@ class FeastedAPIApplication(Application):
         settings = {
         }
         # FIXME: this should change for python3 (lower verbosity)... I think
-        super(Application, self).__init__(routes, **settings)
-        rdb.set_loop("tornado")
+        super().__init__(handlers=routes, **settings)
+        self.server_id = uuid.uuid4()
+        self.start_time = datetime.utcnow()
+        rdb.set_loop_type("tornado")
         # Tornado Future returned below
         self.db_conn = rdb.connect(host='localhost', port=28015)
         

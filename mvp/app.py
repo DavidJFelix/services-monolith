@@ -1,40 +1,4 @@
 #!/usr/bin/env python
-from flask import abort, jsonify, Flask, request
-from oauth2client import client, crypt
-from sqlalchemy import create_engine, MetaData, Table
-from Crypto import Random
-import base64
-import platform
-import socket
-
-
-app = Flask(__name__)
-engine = create_engine('postgresql://dev:password@ds-dev.clqblfd0mdpm.us-east-1.rds.amazonaws.com:5432/dev')
-metadata = MetaData(bind=engine)
-users = Table('users', metadata, autoload=True)
-oauth_providers = Table('oauth_providers', metadata, autoload=True)
-oauth_claims = Table('oauth_claims', metadata, autoload=True)
-bearer_tokens = Table('bearer_tokens', metadata, autoload=True)
-
-
-@app.route("/", methods=["GET"])
-def handle_api_index():
-    resp = {
-        'healthcheck_url': request.base_url + 'health',
-    }
-    return jsonify(**resp)
-        
-
-@app.route("/health", methods=["GET"])
-def handle_health():
-    resp = {
-        'status': 'UP',
-        'fullyQualifiedDomainName': socket.getfqdn(),
-        'node': platform.node(),
-    }
-    return jsonify(**resp)
-
-
 
 @app.route("/auth/token-auth", methods=["POST"])
 def handle_token_auth():
