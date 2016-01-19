@@ -15,7 +15,7 @@ def main():
         (r'/health', HealthHandler),
         (r'/info', InfoHandler),
         (r'/user', UserHandler),
-        (r'/user/by-token', UserHandler),
+        (r'/user/by-token', UserByTokenHandler),
         (r'/address', AddressHandler),
         (r'/auth/token-auth', AuthHandler),
     ]
