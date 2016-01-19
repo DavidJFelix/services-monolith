@@ -5,7 +5,6 @@ from .handler import DefaultHandler
 
 class UserHandler(DefaultHandler):
 
-
     def delete(self):
         # Get the user from the header and mark inactive
         raise Finish()
