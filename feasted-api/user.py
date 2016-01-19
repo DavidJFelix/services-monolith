@@ -1,5 +1,6 @@
 from tornado import gen
 from tornado.web import Finish
+import rethinkdb as rdb
 
 from .handler import DefaultHandler
 
@@ -14,7 +15,7 @@ class UserHandler(DefaultHandler):
     @gen.coroutine
     def get(self):
         user_id = yield self.check_auth_for_user_id()
-        user = yield self.rdb.table("users").get(user_id).run(self.db_conn)
+        user = yield rdb.table("users").get(user_id).run(self.db_conn)
         if user:
             self.set_status(200)
             self.write(user)
