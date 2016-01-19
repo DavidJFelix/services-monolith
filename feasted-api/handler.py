@@ -11,23 +11,27 @@ class DefaultHandler(RequestHandler):
     def get(self, *args, **kwargs):
         self.set_status(405)
         raise Finish()
-        
-        
+    
+    def head(self, *args, **kwargs):
+        self.set_status(405)
+        raise Finish()
+
+    
     def options(self, *args, **kwargs):
         self.set_status(405)
         raise Finish()
-        
-        
+
+
     def patch(self, *args, **kwargs):
         self.set_status(405)
         raise Finish()
-        
-        
+
+
     def post(self, *args, **kwargs):
         self.set_status(405)
         raise Finish()
-        
-        
+
+
     def put(self, *args, **kwargs):
         self.set_status(405)
         raise Finish()
