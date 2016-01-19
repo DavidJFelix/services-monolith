@@ -1,3 +1,4 @@
+from tornado import gen
 from tornado.web import Finish
 
 from .handler import DefaultHandler
@@ -10,12 +11,22 @@ class UserHandler(DefaultHandler):
         raise Finish()
 
     
+    @gen.coroutine
     def get(self):
-        # Get the user from header and handle
+        user_id = yield self.check_auth_for_user_id()
+        user = yield self.rdb.table("users").get(user_id).run(self.db_conn)
+        if user:
+            self.set_status(200)
+            self.write(user)
+        else:
+            # TODO: extract
+            self.set_status(404)
+            self.write({})
         raise Finish()
 
 
     def head(self):
+        # TODO: extract get and implement head from extracted
         raise Finish()
 
 
