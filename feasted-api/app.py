@@ -8,7 +8,7 @@ from tornado.web import Application
 
 from .address import AddressHandler
 from .api import APIHandler
-from .auth import AuthHandler
+from .auth import FacebookAuthHandler, GoogleAuthHandler
 from .diag import HealthHandler, InfoHandler
 from .user import UserHandler, UserByTokenHandler
 
@@ -23,11 +23,11 @@ class FeastedAPIApplication(Application):
             (r'/user', UserHandler),
             (r'/user/by-token', UserByTokenHandler),
             (r'/address', AddressHandler),
-            (r'/auth/token-auth', AuthHandler),
+            (r'/auth/google/jwt-auth', GoogleAuthHandler),
+            (r'/auth/facebook/token-auth', FacebookAuthHandler),
         ]
         settings = {
         }
-        # FIXME: this should change for python3 (lower verbosity)... I think
         super().__init__(handlers=routes, **settings)
         self.server_id = uuid.uuid4()
         self.start_time = datetime.utcnow()
@@ -35,7 +35,6 @@ class FeastedAPIApplication(Application):
         # Tornado Future returned below
         self.db_conn = rdb.connect(host='localhost', port=28015)
         
-
 
 def main():
     application = FeastedAPIApplication()

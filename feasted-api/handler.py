@@ -1,4 +1,4 @@
-from tornado.web import Finish, RequestHandler
+from tornado.web import RequestHandler, HTTPError
 
 
 class DefaultHandler(RequestHandler):
@@ -18,29 +18,22 @@ class DefaultHandler(RequestHandler):
         return self.application.db_conn
 
     def delete(self, *args, **kwargs):
-        self.set_status(405)
-        raise Finish()
+        raise HTTPError(405, reason="Method not allowed.")
 
     def get(self, *args, **kwargs):
-        self.set_status(405)
-        raise Finish()
+        raise HTTPError(405, reason="Method not allowed.")
 
     def head(self, *args, **kwargs):
-        self.set_status(405)
-        raise Finish()
+        raise HTTPError(405, reason="Method not allowed.")
 
     def options(self, *args, **kwargs):
-        self.set_status(405)
-        raise Finish()
+        raise HTTPError(405, reason="Method not allowed.")
 
     def patch(self, *args, **kwargs):
-        self.set_status(405)
-        raise Finish()
+        raise HTTPError(405, reason="Method not allowed.")
 
     def post(self, *args, **kwargs):
-        self.set_status(405)
-        raise Finish()
+        raise HTTPError(405, reason="Method not allowed.")
 
     def put(self, *args, **kwargs):
-        self.set_status(405)
-        raise Finish()
+        raise HTTPError(405, reason="Method not allowed.")

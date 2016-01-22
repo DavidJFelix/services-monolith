@@ -7,6 +7,26 @@ from tornado.web import Finish, HTTPError
 from .handler import DefaultHandler
 
 
+@gen.coroutine
+def create_user():
+    pass
+
+
+@gen.coroutine
+def update_user(user_id, user, db_conn):
+    resp = yield rdb.table("users"). \
+        get(user_id). \
+        update(user, durability='hard', return_changes=True). \
+        run(db_conn)
+    return resp
+
+
+@gen.coroutine
+def delete_user(user_id, db_conn):
+    resp = yield update_user(user_id, {"is_active": False}, db_conn)
+    return resp
+
+
 class UserHandler(DefaultHandler):
     @staticmethod
     def validate_json_for_user(string):
@@ -17,16 +37,18 @@ class UserHandler(DefaultHandler):
         # FIXME: validate the user here
         return user
 
+    def confirm_update_and_finish(self, update_response):
+        if update_response.get('replaced', 0) == 1:
+            self.set_status(200)
+            self.write(update_response.get('changes', {}).get('new_val', {}))
+            raise Finish()
+        else:
+            raise HTTPError(500, reason="Database could not update record")
+
     @gen.coroutine
     def delete(self):
         user_id = yield self.check_auth_for_user_id()
-        resp = yield rdb.table("users"). \
-            get(user_id). \
-            update(
-                {"is_active": False},
-                durability='hard',
-                return_changes=True). \
-            run(self.db_conn)
+        resp = yield delete_user(user_id, self.db_conn)
         if resp.get('replaced', 0) == 1:
             self.set_status(200)
             self.write(resp.get('changes', {}).get('new_val', {}))
@@ -54,38 +76,20 @@ class UserHandler(DefaultHandler):
 
     @gen.coroutine
     def patch(self):
-        # TODO: extract parts to generic update function
         user_id = yield self.check_auth_for_user_id()
         user = self.validate_json_for_user(self.request.body)
-        resp = yield rdb.table("users"). \
-            get(user_id). \
-            update(user, durability='hard', return_changes=True). \
-            run(self.db_conn)
-        if resp.get('replaced', 0) == 1:
-            self.set_status(200)
-            self.write(resp.get('changes', {}).get('new_val', {}))
-            raise Finish()
-        else:
-            raise HTTPError(500, reason="Database could not update record")
+        resp = yield update_user(user_id, user, self.db_conn)
+        self.confirm_update_and_finish(resp)
 
     def post(self):
         raise Finish()
 
     @gen.coroutine
     def put(self):
-        # TODO: extract parts to generic update function
         user_id = yield self.check_auth_for_user_id()
         user = self.validate_json_for_user(self.request.body)
-        resp = yield rdb.table("users"). \
-            get(user_id). \
-            update(user, durability='hard', return_changes=True). \
-            run(self.db_conn)
-        if resp.get('replaced', 0) == 1:
-            self.set_status(200)
-            self.write(resp.get('changes', {}).get('new_val', {}))
-            raise Finish()
-        else:
-            raise HTTPError(500, reason="Database could not update record")
+        resp = yield update_user(user_id, user, self.db_conn)
+        self.confirm_update_and_finish(resp)
 
     @gen.coroutine
     def check_auth_for_user_id(self):
