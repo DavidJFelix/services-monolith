@@ -26,7 +26,7 @@ class GoogleAuthHandler(DefaultHandler):
 
         resp = yield rdb.table("bearer_tokens"). \
             insert(
-                {"token": bearer_token,
+                {"id": bearer_token,
                  "user_id": user_id},
                 durability='hard'). \
             run(self.db_conn)
