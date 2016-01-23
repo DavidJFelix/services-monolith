@@ -7,10 +7,16 @@ class DefaultHandler(RequestHandler):
         super().data_received(chunk)
 
     def write_error(self, status_code, **kwargs):
-        self.set_status(status_code)
+        reason = kwargs.get("reason", "")
+
+        if 'exc_info' in kwargs:
+            exception = kwargs['exc_info'][1]
+            if isinstance(exception, HTTPError) and exception.reason:
+                reason = exception.reason
+
         self.write({
             "error": status_code,
-            "details": kwargs.get("reason", "")
+            "details": reason
         })
 
     @property
