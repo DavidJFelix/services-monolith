@@ -1,7 +1,7 @@
 from tornado.web import Finish
 from tornado.escape import json_encode
 
-from handler import DefaultHandler
+from .handler import DefaultHandler
 
 
 class HealthHandler(DefaultHandler):
