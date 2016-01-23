@@ -6,7 +6,7 @@ from Crypto import Random
 from tornado import gen
 from tornado.web import Finish, HTTPError
 
-from .handler import DefaultHandler
+from handler import DefaultHandler
 
 
 class GoogleAuthHandler(DefaultHandler):

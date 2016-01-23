@@ -6,11 +6,11 @@ import rethinkdb as rdb
 from tornado.ioloop import IOLoop
 from tornado.web import Application
 
-from .address import AddressHandler
-from .api import APIHandler
-from .auth import FacebookAuthHandler, GoogleAuthHandler
-from .diag import HealthHandler, InfoHandler
-from .user import UserHandler, UserByTokenHandler
+from address import AddressHandler
+from api import APIHandler
+from auth import FacebookAuthHandler, GoogleAuthHandler
+from diag import HealthHandler, InfoHandler
+from user import UserHandler, UserByTokenHandler
 
 
 class FeastedAPIApplication(Application):

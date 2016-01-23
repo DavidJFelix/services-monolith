@@ -4,7 +4,7 @@ import rethinkdb as rdb
 from tornado import gen
 from tornado.web import Finish, HTTPError
 
-from .handler import DefaultHandler
+from handler import DefaultHandler
 
 
 @gen.coroutine

@@ -1,4 +1,4 @@
-from .handler import DefaultHandler
+from handler import DefaultHandler
 
 
 class APIHandler(DefaultHandler):
