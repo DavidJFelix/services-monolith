@@ -20,7 +20,7 @@ def pad_b64string(b64string):
 
 @gen.coroutine
 def create_google_oauth_claim(provider_uid, user_id, db_conn):
-    resp = yield rdb.table("google_oauth_claim"). \
+    resp = yield rdb.table("google_oauth_claims"). \
         insert(
             {"id": provider_uid, "user_id": user_id},
             durability='hard'). \
