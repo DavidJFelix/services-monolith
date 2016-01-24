@@ -34,7 +34,7 @@ def delete_user(user_id, db_conn):
     return resp
 
 
-class UserHandler(DefaultHandler):
+class MeHandler(DefaultHandler):
     @staticmethod
     def validate_json_for_user(string):
         try:
@@ -129,5 +129,10 @@ class UserHandler(DefaultHandler):
             raise HTTPError(401, reason="Bearer token is invalid")
 
 
-class UserByTokenHandler(DefaultHandler):
+
+class MeByTokenHandler(DefaultHandler):
+    pass
+
+
+class UserHandler(DefaultHandler):
     pass

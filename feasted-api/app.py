@@ -11,7 +11,7 @@ from .address import AddressHandler
 from .api import APIHandler
 from .auth import FacebookAuthHandler, GoogleAuthHandler
 from .diag import HealthHandler, InfoHandler
-from .user import UserHandler, UserByTokenHandler
+from .user import MeHandler, UserHandler, MeByTokenHandler
 
 
 class FeastedAPIApplication(Application):
@@ -20,9 +20,12 @@ class FeastedAPIApplication(Application):
             (r'/', APIHandler),
             (r'/health', HealthHandler),
             (r'/info', InfoHandler),
-            (r'/user', UserHandler),
-            (r'/user/by-token', UserByTokenHandler),
-            (r'/address', AddressHandler),
+            (r'/me', MeHandler),
+            (r'/me/by-token', MeByTokenHandler),
+            (r'/users', UserHandler),
+            (r'/users/(?P<user_id>[^\/]+)', UserHandler),
+            (r'/addresses', AddressHandler),
+            (r'/addresses/(?P<address_id>[^\/]+)', AddressHandler),
             (r'/auth/google/jwt-auth', GoogleAuthHandler),
             (r'/auth/facebook/token-auth', FacebookAuthHandler),
         ]
