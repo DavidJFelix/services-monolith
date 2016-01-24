@@ -13,6 +13,10 @@ from .handler import DefaultHandler
 from .user import create_user
 
 
+def pad_b64string(b64string):
+    return b64string + b'=' * (4 - len(b64string) % 4)
+
+
 @gen.coroutine
 def create_google_oauth_claim(provider_uid, user_id, db_conn):
     resp = yield rdb.table("google_oauth_claim"). \
@@ -65,7 +69,7 @@ class GoogleAuthHandler(DefaultHandler):
             raise HTTPError(400, reason="Malformed JWT POST body")
 
         _, b64_payload, _ = jwt.split(b".")
-        payload_b = base64.b64decode(b64_payload)
+        payload_b = base64.b64decode(pad_b64string(b64_payload))
         payload_s = payload_b.decode()
 
         # Attempt to parse UTF string as JSON
