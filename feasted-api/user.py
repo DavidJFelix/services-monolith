@@ -85,7 +85,7 @@ class UserHandler(DefaultHandler):
     @gen.coroutine
     def patch(self):
         user_id = yield self.check_auth_for_user_id()
-        user = self.validate_json_for_user(self.request.body)
+        user = self.validate_json_for_user(to_unicode(self.request.body))
         resp = yield update_user(user_id, user, self.db_conn)
         self.confirm_update_and_finish(resp)
 
@@ -96,7 +96,7 @@ class UserHandler(DefaultHandler):
     def put(self):
         user_id = yield self.check_auth_for_user_id()
         conn = yield self.db_conn()
-        user = self.validate_json_for_user(self.request.body)
+        user = self.validate_json_for_user(to_unicode(self.request.body))
         resp = yield update_user(user_id, user, conn)
         self.confirm_update_and_finish(resp)
 
