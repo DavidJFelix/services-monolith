@@ -1,8 +1,8 @@
 import base64
+import binascii
 from json import JSONDecodeError
 from uuid import uuid4
 
-import binascii
 import rethinkdb as rdb
 from Crypto import Random
 from tornado import gen
@@ -28,6 +28,16 @@ def create_google_oauth_claim(provider_uid, user_id, db_conn):
     return resp
 
 
+@gen.coroutine
+def create_bearer_token(bearer_token, user_id, db_conn):
+    resp = yield rdb.table("bearer_tokens"). \
+        insert(
+            {"id": bearer_token, "user_id": user_id},
+            durability='hard'). \
+        run(db_conn)
+    return resp
+
+
 class GoogleAuthHandler(DefaultHandler):
     @gen.coroutine
     def get_google_certs(self):
@@ -47,8 +57,6 @@ class GoogleAuthHandler(DefaultHandler):
 
     @gen.coroutine
     def verify_auth(self):
-        # TODO: move to config
-        client_id = "531566137905-fhljh7kirg7v9kg4019qd6aaob57gd4s.apps.googleusercontent.com"
         google_cert = yield self.get_google_certs()
         token = utf8(self.request.body)
         # FIXME verify here
@@ -120,22 +128,16 @@ class GoogleAuthHandler(DefaultHandler):
         user_id = yield self.get_user_id_for_uid(provider_uid)
 
         # I had this at 256, but the maximum primary key size is 127 chars
-        bearer_token = base64.b64encode(Random.get_random_bytes(64))
+        bearer_token = base64.b64encode(Random.get_random_bytes(64)).decode()
         conn = yield self.db_conn()
-
-        resp = yield rdb.table("bearer_tokens"). \
-            insert(
-                {"id": bearer_token,
-                 "user_id": user_id},
-                durability='hard'). \
-            run(conn)
+        resp = yield create_bearer_token(bearer_token, user_id, conn)
 
         if resp.get("inserted", 0) != 1:
             raise HTTPError(500, "Could not create bearer token")
 
         token_container = {
             "type": "Bearer",
-            "text": bearer_token,
+            "data": bearer_token,
         }
         self.set_status(200)
         self.write(token_container)

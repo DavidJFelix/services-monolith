@@ -2,6 +2,7 @@ import json
 
 import rethinkdb as rdb
 from tornado import gen
+from tornado.escape import to_unicode
 from tornado.web import Finish, HTTPError
 
 from .handler import DefaultHandler
@@ -106,6 +107,7 @@ class UserHandler(DefaultHandler):
         token = self.request.headers.get('authorization', None). \
             lstrip('bearer'). \
             strip()
+        token = to_unicode(token)
         conn = yield self.db_conn()
         user_id = yield rdb.table("bearer_tokens"). \
             get(token). \

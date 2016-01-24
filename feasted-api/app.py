@@ -31,6 +31,7 @@ class FeastedAPIApplication(Application):
         super().__init__(handlers=routes, **settings)
         self.server_id = uuid.uuid4()
         self.start_time = datetime.utcnow()
+        self.client_id = "531566137905-fhljh7kirg7v9kg4019qd6aaob57gd4s.apps.googleusercontent.com"
         rdb.set_loop_type("tornado")
 
     @gen.coroutine
