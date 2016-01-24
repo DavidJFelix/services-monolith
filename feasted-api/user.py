@@ -1,4 +1,5 @@
 import json
+from operator import xor
 
 import rethinkdb as rdb
 from tornado import gen
@@ -22,7 +23,7 @@ def create_user(user_id, db_conn):
 def update_user(user_id, user, db_conn):
     resp = yield rdb.table("users"). \
         get(user_id). \
-        update(user, durability='hard', return_changes=True, comflic='update'). \
+        update(user, durability='hard', return_changes=True). \
         run(db_conn)
     return resp
 
@@ -44,7 +45,8 @@ class UserHandler(DefaultHandler):
         return user
 
     def confirm_update_and_finish(self, update_response):
-        if update_response.get('replaced', 0) == 1:
+        if xor((update_response.get('replaced', 0) == 1),
+               (update_response.get('unchanged', 0) == 1)):
             self.set_status(200)
             changes = update_response.get('changes', [])
             if len(changes) == 1:
