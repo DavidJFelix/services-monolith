@@ -101,7 +101,7 @@ class GoogleAuthHandler(DefaultHandler):
 
         # TODO: condense db round trips here
         # When there's no claim, form one around a new user
-        user_id = uuid4()
+        user_id = str(uuid4())
         resp = yield create_user(user_id, conn)
 
         if resp.get("inserted", 0) != 1:
@@ -121,14 +121,6 @@ class GoogleAuthHandler(DefaultHandler):
 
         bearer_token = base64.b64encode(Random.get_random_bytes(256))
         conn = yield self.db_conn()
-        resp = yield rdb.table("users"). \
-            insert(
-                {"id": user_id},
-                durability='hard'). \
-            run(conn)
-
-        if resp.get("inserted", 0) != 1:
-            raise HTTPError(500, "Could not create new user")
 
         resp = yield rdb.table("bearer_tokens"). \
             insert(

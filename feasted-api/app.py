@@ -36,7 +36,7 @@ class FeastedAPIApplication(Application):
     @gen.coroutine
     def db_conn(self):
         # Tornado Future returned below
-        conn = yield rdb.connect(host='localhost', port=28015, db='feasted')
+        conn = yield rdb.connect(host='10.0.0.94', port=28015, db='feasted')
         return conn
 
 
