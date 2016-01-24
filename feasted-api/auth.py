@@ -5,7 +5,7 @@ from uuid import uuid4
 import rethinkdb as rdb
 from Crypto import Random
 from tornado import gen
-from tornado.escape import json_decode
+from tornado.escape import json_decode, utf8
 from tornado.httpclient import AsyncHTTPClient
 from tornado.web import Finish, HTTPError
 
@@ -45,7 +45,7 @@ class GoogleAuthHandler(DefaultHandler):
         # TODO: move to config
         client_id = "531566137905-fhljh7kirg7v9kg4019qd6aaob57gd4s.apps.googleusercontent.com"
         google_cert = yield self.get_google_certs()
-        token = self.request.body
+        token = utf8(self.request.body)
         # FIXME verify here
         return True
 
@@ -58,7 +58,7 @@ class GoogleAuthHandler(DefaultHandler):
             raise HTTPError(401, reason="JWT Verification failed")
 
     def get_uid_from_jwt(self):
-        jwt = str.encode(self.request.body)
+        jwt = utf8(self.request.body)
 
         # Extract the payload from the bytestring, then decode it to UTF string
         _, b64_payload, _ = jwt.split(b".")
