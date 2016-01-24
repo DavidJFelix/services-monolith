@@ -105,15 +105,19 @@ class UserHandler(DefaultHandler):
         # FIXME: find a better place to do this whole function
         # FIXME: this bearer string parse could be clearer
         token = self.request.headers.get('authorization', None). \
-            lstrip('bearer'). \
+            lstrip('Bbearer'). \
             strip()
         token = to_unicode(token)
         conn = yield self.db_conn()
-        user_id = yield rdb.table("bearer_tokens"). \
+        bearer_token = yield rdb.table("bearer_tokens"). \
             get(token). \
             run(conn)
-        if user_id:
-            return user_id
+        if bearer_token:
+            user_id = bearer_token.get("user_id", None)
+            if user_id is not None:
+                return user_id
+            else:
+                raise HTTPError(500, reason="Database token did not map to user id")
         else:
             raise HTTPError(401, reason="Bearer token is invalid")
 
