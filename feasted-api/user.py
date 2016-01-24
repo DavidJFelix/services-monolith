@@ -23,7 +23,7 @@ def create_user(user_id, db_conn):
 def update_user(user_id, user, db_conn):
     resp = yield rdb.table("users"). \
         get(user_id). \
-        update(user, durability='hard', return_changes=True). \
+        update(user, durability='hard', return_changes='always'). \
         run(db_conn)
     return resp
 
@@ -50,7 +50,7 @@ class UserHandler(DefaultHandler):
             self.set_status(200)
             changes = update_response.get('changes', [])
             if len(changes) == 1:
-                self.write(changes[1].get('new_val', {}))
+                self.write(changes[0].get('new_val', {}))
             else:
                 self.write({})
             raise Finish()
