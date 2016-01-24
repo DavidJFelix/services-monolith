@@ -22,7 +22,7 @@ def create_user(user_id, db_conn):
 def update_user(user_id, user, db_conn):
     resp = yield rdb.table("users"). \
         get(user_id). \
-        update(user, durability='hard', return_changes=True). \
+        update(user, durability='hard', return_changes=True, comflic='update'). \
         run(db_conn)
     return resp
 
