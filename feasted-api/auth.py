@@ -2,6 +2,7 @@ import base64
 from json import JSONDecodeError
 from uuid import uuid4
 
+import binascii
 import rethinkdb as rdb
 from Crypto import Random
 from tornado import gen
@@ -64,18 +65,14 @@ class GoogleAuthHandler(DefaultHandler):
     def get_uid_from_jwt(self):
         jwt = utf8(self.request.body)
 
-        # Extract the payload from the bytestring, then decode it to UTF string
-        if jwt.count(b".") != 2:
-            raise HTTPError(400, reason="Malformed JWT POST body")
-
-        _, b64_payload, _ = jwt.split(b".")
-        payload_b = base64.b64decode(pad_b64string(b64_payload))
-        payload_s = payload_b.decode()
-
         # Attempt to parse UTF string as JSON
         try:
+            _, b64_payload, _ = jwt.split(b".")
+            payload_b = base64.b64decode(pad_b64string(b64_payload))
+            payload_s = payload_b.decode()
+
             payload_d = json_decode(payload_s)
-        except JSONDecodeError:
+        except (JSONDecodeError, binascii.Error, ValueError):
             raise HTTPError(400, reason="Malformed JWT POST body")
 
         # Look for the uid in the JSON dictionary
