@@ -1,3 +1,4 @@
+from tornado import gen
 from tornado.web import RequestHandler, HTTPError
 
 
@@ -19,9 +20,10 @@ class DefaultHandler(RequestHandler):
             "details": reason
         })
 
-    @property
+    @gen.coroutine
     def db_conn(self):
-        return self.application.db_conn
+        conn = yield self.application.db_conn()
+        return conn
 
     def delete(self, *args, **kwargs):
         raise HTTPError(405, reason="Method not allowed.")

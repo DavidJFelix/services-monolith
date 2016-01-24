@@ -85,9 +85,10 @@ class GoogleAuthHandler(DefaultHandler):
     @gen.coroutine
     def get_user_id_for_uid(self, provider_uid):
         # Check for an existing claim
+        conn = yield self.db_conn()
         claim = yield rdb.table("google_oauth_claims"). \
             get(provider_uid). \
-            run(self.db_conn)
+            run(conn)
 
         # Return the user_id if the claim has it
         if claim is not None:
@@ -101,13 +102,12 @@ class GoogleAuthHandler(DefaultHandler):
         # TODO: condense db round trips here
         # When there's no claim, form one around a new user
         user_id = uuid4()
-        resp = yield create_user(user_id, self.db_conn)
+        resp = yield create_user(user_id, conn)
 
         if resp.get("inserted", 0) != 1:
             raise HTTPError(500, "Could not create new user")
 
-        resp = yield create_google_oauth_claim(provider_uid, user_id,
-                                               self.db_conn)
+        resp = yield create_google_oauth_claim(provider_uid, user_id, conn)
 
         if resp.get("inserted", 0) != 1:
             raise HTTPError(500, "Could not create new claim")
@@ -120,11 +120,12 @@ class GoogleAuthHandler(DefaultHandler):
         user_id = yield self.get_user_id_for_uid(provider_uid)
 
         bearer_token = base64.b64encode(Random.get_random_bytes(256))
+        conn = yield self.db_conn()
         resp = yield rdb.table("users"). \
             insert(
                 {"id": user_id},
                 durability='hard'). \
-            run(self.db_conn)
+            run(conn)
 
         if resp.get("inserted", 0) != 1:
             raise HTTPError(500, "Could not create new user")
@@ -134,7 +135,7 @@ class GoogleAuthHandler(DefaultHandler):
                 {"id": bearer_token,
                  "user_id": user_id},
                 durability='hard'). \
-            run(self.db_conn)
+            run(conn)
 
         if resp.get("inserted", 0) != 1:
             raise HTTPError(500, "Could not create bearer token")

@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime
 
 import rethinkdb as rdb
+from tornado import gen
 from tornado.ioloop import IOLoop
 from tornado.web import Application
 
@@ -14,7 +15,6 @@ from .user import UserHandler, UserByTokenHandler
 
 
 class FeastedAPIApplication(Application):
-    
     def __init__(self):
         routes = [
             (r'/', APIHandler),
@@ -32,9 +32,13 @@ class FeastedAPIApplication(Application):
         self.server_id = uuid.uuid4()
         self.start_time = datetime.utcnow()
         rdb.set_loop_type("tornado")
+
+    @gen.coroutine
+    def db_conn(self):
         # Tornado Future returned below
-        self.db_conn = rdb.connect(host='localhost', port=28015)
-        
+        conn = yield rdb.connect(host='localhost', port=28015, db='feasted')
+        return conn
+
 
 def main():
     application = FeastedAPIApplication()

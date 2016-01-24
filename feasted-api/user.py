@@ -53,7 +53,8 @@ class UserHandler(DefaultHandler):
     @gen.coroutine
     def delete(self):
         user_id = yield self.check_auth_for_user_id()
-        resp = yield delete_user(user_id, self.db_conn)
+        conn = yield self.db_conn()
+        resp = yield delete_user(user_id, conn)
         if resp.get('replaced', 0) == 1:
             self.set_status(200)
             self.write(resp.get('changes', {}).get('new_val', {}))
@@ -64,7 +65,8 @@ class UserHandler(DefaultHandler):
     @gen.coroutine
     def get(self):
         user_id = yield self.check_auth_for_user_id()
-        user = yield rdb.table("users").get(user_id).run(self.db_conn)
+        conn = yield self.db_conn()
+        user = yield rdb.table("users").get(user_id).run(conn)
         if user:
             self.set_status(200)
             self.write(user)
@@ -92,8 +94,9 @@ class UserHandler(DefaultHandler):
     @gen.coroutine
     def put(self):
         user_id = yield self.check_auth_for_user_id()
+        conn = yield self.db_conn()
         user = self.validate_json_for_user(self.request.body)
-        resp = yield update_user(user_id, user, self.db_conn)
+        resp = yield update_user(user_id, user, conn)
         self.confirm_update_and_finish(resp)
 
     @gen.coroutine
@@ -103,9 +106,10 @@ class UserHandler(DefaultHandler):
         token = self.request.headers.get('authorization', None). \
             lstrip('bearer'). \
             strip()
+        conn = yield self.db_conn()
         user_id = yield rdb.table("bearer_tokens"). \
             get(token). \
-            run(self.db_conn)
+            run(conn)
         if user_id:
             return user_id
         else:
