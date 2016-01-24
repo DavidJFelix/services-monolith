@@ -45,7 +45,7 @@ class GoogleAuthHandler(DefaultHandler):
         # TODO: move to config
         client_id = "531566137905-fhljh7kirg7v9kg4019qd6aaob57gd4s.apps.googleusercontent.com"
         google_cert = yield self.get_google_certs()
-        token = str.encode(self.request.body)
+        token = self.request.body
         # FIXME verify here
         return True
 
