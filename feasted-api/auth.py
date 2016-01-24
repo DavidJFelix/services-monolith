@@ -119,7 +119,8 @@ class GoogleAuthHandler(DefaultHandler):
         provider_uid = yield self.verify_for_uid()
         user_id = yield self.get_user_id_for_uid(provider_uid)
 
-        bearer_token = base64.b64encode(Random.get_random_bytes(256))
+        # I had this at 256, but the maximum primary key size is 127 chars
+        bearer_token = base64.b64encode(Random.get_random_bytes(64))
         conn = yield self.db_conn()
 
         resp = yield rdb.table("bearer_tokens"). \
