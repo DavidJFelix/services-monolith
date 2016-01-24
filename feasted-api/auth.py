@@ -61,6 +61,9 @@ class GoogleAuthHandler(DefaultHandler):
         jwt = utf8(self.request.body)
 
         # Extract the payload from the bytestring, then decode it to UTF string
+        if jwt.count(b".") != 2:
+            raise HTTPError(400, reason="Malformed JWT POST body")
+
         _, b64_payload, _ = jwt.split(b".")
         payload_b = base64.b64decode(b64_payload)
         payload_s = payload_b.decode()
