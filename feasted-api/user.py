@@ -8,8 +8,13 @@ from .handler import DefaultHandler
 
 
 @gen.coroutine
-def create_user():
-    pass
+def create_user(user_id, db_conn):
+    resp = yield rdb.table("users"). \
+        insert(
+            {"id": user_id, "is_active": False},
+            durability='hard'). \
+        run(db_conn)
+    return resp
 
 
 @gen.coroutine
