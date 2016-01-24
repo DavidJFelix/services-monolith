@@ -46,7 +46,11 @@ class UserHandler(DefaultHandler):
     def confirm_update_and_finish(self, update_response):
         if update_response.get('replaced', 0) == 1:
             self.set_status(200)
-            self.write(update_response.get('changes', {}).get('new_val', {}))
+            changes = update_response.get('changes', [])
+            if len(changes) == 1:
+                self.write(changes[1].get('new_val', {}))
+            else:
+                self.write({})
             raise Finish()
         else:
             raise HTTPError(500, reason="Database could not update record")
