@@ -1,6 +1,7 @@
 import json
 
 import rethinkdb as rdb
+import time
 from tornado import gen
 from tornado.escape import to_unicode
 from tornado.web import Finish, HTTPError
@@ -12,7 +13,7 @@ from .handler import DefaultHandler
 def create_user(user_id, db_conn):
     resp = yield rdb.table("users"). \
         insert(
-            {"id": user_id, "is_active": False},
+            {"id": user_id, "is_active": False, "created_ad" : time.time()},
             durability='hard'). \
         run(db_conn)
     return resp
