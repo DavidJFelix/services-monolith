@@ -1,4 +1,7 @@
+from typing import Optional
+
 from tornado import gen
+from tornado.escape import to_unicode
 from tornado.web import RequestHandler, HTTPError
 
 
@@ -45,3 +48,14 @@ class DefaultHandler(RequestHandler):
 
     def put(self, *args, **kwargs):
         raise HTTPError(405, reason="Method not allowed.")
+
+
+class BaseBearerAuthHandler(DefaultHandler):
+    def get_bearer_token(self) -> Optional[str]:
+        auth_header = self.request.headers.get('authorization', None)
+        if auth_header:
+            token = auth_header.lstrip('Bbearer').strip()
+            token = to_unicode(token)
+            return token
+        else:
+            return None

@@ -1,6 +1,6 @@
 from tornado.web import Finish
 
-from .handler import DefaultHandler
+from .base import DefaultHandler
 
 
 class AddressHandler(DefaultHandler):

@@ -7,11 +7,17 @@ from tornado import gen
 from tornado.ioloop import IOLoop
 from tornado.web import Application
 
-from .address import AddressHandler
-from .api import APIHandler
-from .auth import FacebookAuthHandler, GoogleAuthHandler
-from .diag import HealthHandler, InfoHandler
-from .user import MeHandler, UserHandler, MeByTokenHandler
+from .handlers import (
+    AddressHandler,
+    APIHandler,
+    FacebookAuthHandler,
+    GoogleAuthTokenHandler,
+    HealthHandler,
+    InfoHandler,
+    MeByTokenHandler,
+    MeHandler,
+    UserHandler
+)
 
 
 class FeastedAPIApplication(Application):
@@ -26,7 +32,7 @@ class FeastedAPIApplication(Application):
             (r'/users/(?P<user_id>[^\/]+)', UserHandler),
             (r'/addresses', AddressHandler),
             (r'/addresses/(?P<address_id>[^\/]+)', AddressHandler),
-            (r'/auth/google/jwt-auth', GoogleAuthHandler),
+            (r'/auth/google/jwt-auth', GoogleAuthTokenHandler),
             (r'/auth/facebook/token-auth', FacebookAuthHandler),
         ]
         settings = {
