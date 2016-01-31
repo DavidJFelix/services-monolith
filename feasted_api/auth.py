@@ -25,8 +25,8 @@ def get_google_certs(certs_uri="https://www.googleapis.com/oauth2/v1/certs"):
             json_decode(response.body)
         except JSONDecodeError:
             raise HTTPError(500, reason="Google certificate was malformed")
-        else:
-            raise HTTPError(503, reason="Could not reach Google certificate")
+    else:
+        raise HTTPError(503, reason="Could not reach Google certificate")
 
 
 def get_uid_from_jwt(token):
@@ -53,7 +53,8 @@ def get_uid_from_jwt(token):
 @gen.coroutine
 def verify_google_auth(token):
     google_cert = yield get_google_certs()
-    # FIXME verify here
+    # TODO: Check jwt signature
+    # TODO: Check client id 'aud' field
     return True
 
 
