@@ -7,8 +7,9 @@ import rethinkdb as rdb
 
 
 @gen.coroutine
-def get_meals(ll, radius, db_conn):
-    meals_nearby = yield rdb.table('meals').get_nearest(ll, index = 'location', max_dist = radius).run(db_conn)
+def get_meals(ll, radius, max_results, db_conn):
+    meals_nearby = yield rdb.table('meals').get_nearest(ll, index = 'location', max_dist = radius,
+                                                        max_results = max_results).run(db_conn)
     return meals_nearby
 
 @gen.coroutine
@@ -43,10 +44,14 @@ class MealsHandler(DefaultHandler):
         lng = float(self.get_query_argument("lng"))
         lng_lat = rdb.point(lng, lat)
         radius = int(self.get_query_argument("radius"))
+        max_results = int(self.get_query_argument("max_results", 20))
+        if max_results <= 0:
+            max_results=20
+
         db_conn = yield self.db_conn()
 
         if lng_lat:
-            meals_nearby = yield get_meals(lng_lat, radius, db_conn)
+            meals_nearby = yield get_meals(lng_lat, radius, max_results, db_conn)
             self.set_status(200)
             self.write(json.dumps(meals_nearby))
             raise Finish()
