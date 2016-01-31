@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python -m feasted_api.app
+python -m feasted_api.app "$@"

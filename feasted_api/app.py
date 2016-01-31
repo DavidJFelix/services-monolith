@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime
 
 import rethinkdb as rdb
+import sys
 from tornado import gen
 from tornado.ioloop import IOLoop
 from tornado.web import Application
@@ -48,7 +49,11 @@ class FeastedAPIApplication(Application):
     @gen.coroutine
     def db_conn(self):
         # Tornado Future returned below
-        conn = yield rdb.connect(host='localhost', port=28015, db='feasted')
+        host='10.0.0.94'
+        if len(sys.argv) > 1 and sys.argv[1]=='rdb_local':
+            host = 'localhost'
+
+        conn = yield rdb.connect(host=host, port=28015, db='feasted')
         return conn
 
 
