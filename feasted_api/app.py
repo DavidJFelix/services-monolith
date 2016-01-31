@@ -16,7 +16,8 @@ from .handlers import (
     InfoHandler,
     MeByTokenHandler,
     MeHandler,
-    UserHandler
+    UserHandler,
+    MealsHandler,
 )
 
 
@@ -34,6 +35,7 @@ class FeastedAPIApplication(Application):
             (r'/addresses/(?P<address_id>[^\/]+)', AddressHandler),
             (r'/auth/google/jwt-auth', GoogleAuthTokenHandler),
             (r'/auth/facebook/token-auth', FacebookAuthHandler),
+            (r'/meals', MealsHandler),
         ]
         settings = {
         }
@@ -46,7 +48,7 @@ class FeastedAPIApplication(Application):
     @gen.coroutine
     def db_conn(self):
         # Tornado Future returned below
-        conn = yield rdb.connect(host='10.0.0.94', port=28015, db='feasted')
+        conn = yield rdb.connect(host='localhost', port=28015, db='feasted')
         return conn
 
 
