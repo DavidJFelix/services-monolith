@@ -39,15 +39,14 @@ class MealsHandler(DefaultHandler):
 
     @gen.coroutine
     def get(self):
-        long_lat_array = self.get_query_argument("ll").split(',')
-        lat = float(long_lat_array[0])
-        long = float(long_lat_array[1])
-        ll = rdb.point(lat, long)
+        lat = float(self.get_query_argument("lat"))
+        lng = float(self.get_query_argument("lng"))
+        lng_lat = rdb.point(lng, lat)
         radius = int(self.get_query_argument("radius"))
         db_conn = yield self.db_conn()
 
-        if ll:
-            meals_nearby = yield get_meals(ll, radius, db_conn)
+        if lng_lat:
+            meals_nearby = yield get_meals(lng_lat, radius, db_conn)
             self.set_status(200)
             self.write(json.dumps(meals_nearby))
             raise Finish()
@@ -57,8 +56,9 @@ class MealsHandler(DefaultHandler):
     @gen.coroutine
     def post(self):
         meal = json.loads(self.request.body.decode('utf-8'))
-        long_lat_array = meal['location'].split(',')
-        meal['location'] = rdb.point(float(long_lat_array[0]), float(long_lat_array[1]))
+        lat = float(meal['lat'])
+        lng = float(meal['lng'])
+        meal['location'] = rdb.point(lng, lat)
         db_conn = yield self.db_conn()
         yield add_meal(meal, db_conn)
         self.set_status(200)
