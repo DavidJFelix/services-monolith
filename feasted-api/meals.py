@@ -23,7 +23,7 @@ def update_meal(meal_id,meal, db_conn):
 
 @gen.coroutine
 def add_meal(meal, db_conn):
-    added_meal = yield rdb.table("meals").insert(json.loads(meal.decode('utf-8'))).run(db_conn)
+    added_meal = yield rdb.table("meals").insert(meal).run(db_conn)
     return added_meal
 
 
@@ -54,7 +54,9 @@ class MealsHandler(DefaultHandler):
 
     @gen.coroutine
     def post(self):
-        meal = self.request.body
+        meal = json.loads(self.request.body.decode('utf-8'))
+        long_lat_array = meal['location'].split(',')
+        meal['location'] = rdb.point(float(long_lat_array[0]), float(long_lat_array[1]))
         db_conn = yield self.db_conn()
         yield add_meal(meal, db_conn)
         self.set_status(200)
@@ -75,6 +77,5 @@ class MealsHandler(DefaultHandler):
         db_conn = yield self.db_conn()
         yield update_meal(meal_id,meal, db_conn)
         self.set_status(200)
-        self.write(meal)
         raise Finish()
 
