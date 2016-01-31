@@ -29,7 +29,8 @@ def create_bearer_token(token, user_id, db_conn) -> Optional[BearerToken]:
                durability='hard', return_changes='always'). \
         run(db_conn)
     if resp.get('inserted', 0) == 1:
-        new_token = resp.get('changes', {}).get('new_val', None)
+        changes = resp.get('changes', [])
+        new_token = changes[0].get('new_val', None) if len(changes) == 1 else None
         return parse_rdb_bearer_token(new_token)
     else:
         return None
@@ -42,7 +43,8 @@ def delete_bearer_token(token, db_conn) -> Optional[BearerToken]:
         delete(durability='hard', return_changes='always'). \
         run(db_conn)
     if resp.get('deleted', 0) == 1:
-        old_token = resp.get('changes', {}).get('old_val', None)
+        changes = resp.get('changes', [])
+        old_token = changes[0].get('old_val', None) if len(changes) == 1 else None
         return parse_rdb_bearer_token(old_token)
     else:
         return None

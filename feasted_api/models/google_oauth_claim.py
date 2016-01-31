@@ -30,7 +30,8 @@ def create_google_oauth_claim(provider_uid, user_id, db_conn) -> Optional[Google
             durability='hard', return_changes='always'). \
         run(db_conn)
     if resp.get('inserted', 0) == 1:
-        new_claim = resp.get('changes', {}).get('new_val', None)
+        changes = resp.get('changes', [])
+        new_claim = changes[0].get('new_val', None) if len(changes) == 1 else None
         return parse_rdb_google_oauth_claim(new_claim)
     else:
         return None
@@ -43,7 +44,8 @@ def delete_google_oauth_claim(provider_uid, db_conn) -> Optional[GoogleOauthClai
         delete(durability='hard', return_changes='always'). \
         run(db_conn)
     if resp.get('deleted', 0) == 1:
-        old_claim = resp.get('changes', {}).get('old_val', None)
+        changes = resp.get('changes', [])
+        old_claim = changes[0].get('old_val', None) if len(changes) == 1 else None
         return parse_rdb_google_oauth_claim(old_claim)
     else:
         return None
