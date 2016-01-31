@@ -70,7 +70,7 @@ def verify_for_provider_uid(token):
 @gen.coroutine
 def get_user_id_for_uid(provider_uid, db_conn):
     # Check for an existing claim
-    claim = get_google_oauth_claim(provider_uid)
+    claim = yield get_google_oauth_claim(provider_uid)
 
     # Return the user_id if the claim has it
     if claim is not None:
