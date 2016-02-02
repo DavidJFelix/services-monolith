@@ -1,10 +1,14 @@
 #!/usr/bin/env python
+import sys
 import uuid
 from datetime import datetime
+from json import JSONDecodeError
+from typing import List, Optional
 
 import rethinkdb as rdb
-import sys
 from tornado import gen
+from tornado.escape import json_decode
+from tornado.httpclient import AsyncHTTPClient
 from tornado.ioloop import IOLoop
 from tornado.web import Application
 
@@ -43,18 +47,33 @@ class FeastedAPIApplication(Application):
         super().__init__(handlers=routes, **settings)
         self.server_id = uuid.uuid4()
         self.start_time = datetime.utcnow()
-        self.client_id = "531566137905-fhljh7kirg7v9kg4019qd6aaob57gd4s.apps.googleusercontent.com"
+        self.certs_uri = "https://www.googleapis.com/oauth2/v1/certs"
+        self.client_ids = [
+            "531566137905-fhljh7kirg7v9kg4019qd6aaob57gd4s.apps.googleusercontent.com",
+        ]
         rdb.set_loop_type("tornado")
 
     @gen.coroutine
     def db_conn(self):
         # Tornado Future returned below
-        host='10.0.0.94'
-        if len(sys.argv) > 1 and sys.argv[1]=='rdb_local':
+        host = '10.0.0.94'
+        if len(sys.argv) > 1 and sys.argv[1] == 'rdb_local':
             host = 'localhost'
 
         conn = yield rdb.connect(host=host, port=28015, db='feasted')
         return conn
+
+    @gen.coroutine
+    def get_google_certs(self) -> Optional[List[str]]:
+        http_client = AsyncHTTPClient()
+        response = yield http_client.fetch(self.certs_uri)
+        if response.code == 200:
+            try:
+                return json_decode(response.body).values()
+            except JSONDecodeError:
+                return None
+        else:
+            return None
 
 
 def main():

@@ -77,11 +77,7 @@ class MeHandler(BaseBearerAuthHandler):
         if bearer_token is None:
             raise HTTPError(401, reason="Bearer token is invalid")
 
-        user_id = bearer_token.get("user_id", None)
-        if user_id is not None:
-            return user_id
-        else:
-            raise HTTPError(500, reason="Database token did not map to user id")
+        return bearer_token.user_id
 
 
 class MeByTokenHandler(BaseBearerAuthHandler):
