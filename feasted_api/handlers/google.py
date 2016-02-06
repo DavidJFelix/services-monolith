@@ -1,21 +1,19 @@
-import base64
-
-from Crypto import Random
 from tornado import gen
 from tornado.escape import utf8
 from tornado.httpclient import HTTPError
 from tornado.web import Finish
 
 from .base import DefaultHandler
-from ..auth import (
-    get_user_id_for_uid,
-)
 from ..lib.token import (
     decode_jwt,
     is_audience_in,
     is_google_jwt_valid,
 )
-from ..models.bearer_token import create_bearer_token
+from ..models.bearer_token import (
+    create_bearer_token,
+    generate_bearer_token,
+)
+from ..models.google_oauth_claim import get_google_oauth_claim
 
 
 class GoogleAuthTokenHandler(DefaultHandler):
@@ -45,11 +43,13 @@ class GoogleAuthTokenHandler(DefaultHandler):
 
         # Map the provider_uid to the user_id
         conn = yield self.db_conn()
-        user_id = yield get_user_id_for_uid(provider_uid, conn)
+        claim = yield get_google_oauth_claim(provider_uid, conn)
+        if claim is None:
+            # Create new user from JWT info
+            pass
 
-        # I had this at 256, but the maximum primary key size is 127 chars
-        bearer_token = base64.b64encode(Random.get_random_bytes(64)).decode()
-        new_bearer_token = yield create_bearer_token(bearer_token, user_id, conn)
+        bearer_token = generate_bearer_token()
+        new_bearer_token = yield create_bearer_token(bearer_token, claim.user_id, conn)
 
         if new_bearer_token is None:
             raise HTTPError(500, "Could not create bearer token")

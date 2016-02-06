@@ -1,8 +1,11 @@
+import base64
 from collections import namedtuple
 from typing import Optional, Dict
 
 import rethinkdb as rdb
+from Crypto import Random
 from tornado import gen
+from tornado.escape import to_unicode
 
 BearerToken = namedtuple('BearerToken', [
     'token',
@@ -56,3 +59,7 @@ def get_bearer_token(token, db_conn) -> Optional[BearerToken]:
         get(token). \
         run(db_conn)
     return parse_rdb_bearer_token(bearer_token)
+
+
+def generate_bearer_token() -> str:
+    return to_unicode(base64.b64encode(Random.get_random_bytes(64)))

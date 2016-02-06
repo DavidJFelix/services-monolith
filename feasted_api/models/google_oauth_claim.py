@@ -1,8 +1,11 @@
 from collections import namedtuple
 from typing import Optional, Dict
+from uuid import uuid4
 
 import rethinkdb as rdb
 from tornado import gen
+
+from ..models.user import create_user
 
 GoogleOauthClaim = namedtuple('GoogleOauthClaim', [
     'provider_uid',
@@ -57,3 +60,29 @@ def get_google_oauth_claim(provider_uid, db_conn) -> Optional[GoogleOauthClaim]:
         get(provider_uid). \
         run(db_conn)
     return parse_rdb_google_oauth_claim(resp)
+
+
+@gen.coroutine
+def get_or_create_user_id_from_uid(provider_uid, db_conn) -> Optional[GoogleOauthClaim]:
+    # Check for an existing claim
+    claim = yield get_google_oauth_claim(provider_uid, db_conn)
+
+    # Return the user_id if the claim has it
+    if claim is not None:
+        return claim.user_id
+
+    # TODO: condense db round trips here
+    # When there's no claim, form one around a new user
+    user_id = str(uuid4())
+    did_insert = yield create_user(user_id, db_conn)
+
+    if not did_insert:
+        return None
+
+    claim = yield create_google_oauth_claim(provider_uid, user_id, db_conn)
+
+    if claim is None:
+        return None
+
+    return claim.user_id
+
