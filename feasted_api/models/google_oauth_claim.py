@@ -26,7 +26,7 @@ def parse_rdb_google_oauth_claim(dictionary: Optional[Dict]) -> Optional[GoogleO
 
 
 @gen.coroutine
-def create_google_oauth_claim(provider_uid, user_id, db_conn) -> Optional[GoogleOauthClaim]:
+def create_google_oauth_claim(provider_uid, user_id: str, db_conn) -> Optional[GoogleOauthClaim]:
     resp = yield rdb.table('google_oauth_claims'). \
         insert(
             {"id": provider_uid, "user_id": user_id},
@@ -85,4 +85,3 @@ def get_or_create_user_id_from_uid(provider_uid, db_conn) -> Optional[GoogleOaut
         return None
 
     return claim.user_id
-
