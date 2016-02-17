@@ -7,6 +7,7 @@ from .google import GoogleAuthTokenHandler
 from .user import MeByTokenHandler, MeHandler, UserHandler
 from .meal import MealsHandler
 from .ingredients import IngredientsHandler
+from .allergens import AllergenHandler
 
 __all__ = [
     'AddressHandler',
@@ -20,5 +21,6 @@ __all__ = [
     'MeHandler',
     'UserHandler',
     'MealsHandler',
-    'IngredientsHandler'
+    'IngredientsHandler',
+    'AllergenHandler'
 ]

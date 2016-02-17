@@ -6,19 +6,19 @@ from tornado import gen
 from tornado.web import Finish, HTTPError
 
 @gen.coroutine
-def get_ingredients(db_conn):
-    ingredients = yield rdb.table('ingredients').order_by('ingredient').run(db_conn)
-    return ingredients
+def get_allergens(db_conn):
+    allergens = yield rdb.table('allergens').order_by('allergen').run(db_conn)
+    return allergens
 
 
 from .base import DefaultHandler
 
-class IngredientsHandler(DefaultHandler):
+class AllergenHandler(DefaultHandler):
 
     @gen.coroutine
     def get(self):
         db_conn = yield self.db_conn()
-        ingredients = yield get_ingredients(db_conn)
-        self.write(json.dumps(ingredients))
+        allergens = yield get_allergens(db_conn)
+        self.write(json.dumps(allergens))
         self.set_status(200)
         raise Finish()
