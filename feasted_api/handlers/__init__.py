@@ -6,6 +6,7 @@ from .facebook import FacebookAuthHandler
 from .google import GoogleAuthTokenHandler
 from .user import MeByTokenHandler, MeHandler, UserHandler
 from .meal import MealsHandler
+from .ingredients import IngredientsHandler
 
 __all__ = [
     'AddressHandler',
@@ -18,5 +19,6 @@ __all__ = [
     'MeByTokenHandler',
     'MeHandler',
     'UserHandler',
-    'MealsHandler'
+    'MealsHandler',
+    'IngredientsHandler'
 ]
