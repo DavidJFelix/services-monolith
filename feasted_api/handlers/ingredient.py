@@ -3,7 +3,10 @@ import json
 
 import rethinkdb as rdb
 from tornado import gen
-from tornado.web import Finish, HTTPError
+from tornado.web import Finish
+
+from .base import DefaultHandler
+
 
 @gen.coroutine
 def get_ingredients(db_conn):
@@ -14,10 +17,8 @@ def get_ingredients(db_conn):
         print('error reading from table')
         return "[]"
 
-from .base import DefaultHandler
 
-class IngredientsHandler(DefaultHandler):
-
+class IngredientHandler(DefaultHandler):
     @gen.coroutine
     def get(self):
         db_conn = yield self.db_conn()

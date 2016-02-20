@@ -33,7 +33,7 @@ def add_meal(meal, db_conn):
     return added_meal
 
 
-class MealsHandler(DefaultHandler):
+class MealHandler(DefaultHandler):
     @staticmethod
     def validate_json_for_meal(string):
         try:
@@ -43,7 +43,7 @@ class MealsHandler(DefaultHandler):
         return meal
 
     @gen.coroutine
-    def get(self):
+    def get(self, meal_id=None):
         lat = float(self.get_query_argument("lat"))
         lng = float(self.get_query_argument("lng"))
         lng_lat = rdb.point(lng, lat)
@@ -63,7 +63,7 @@ class MealsHandler(DefaultHandler):
             raise HTTPError(404, reason="Could not find find meals nearby")
 
     @gen.coroutine
-    def post(self):
+    def post(self, meal_id=None):
         meal = json.loads(self.request.body.decode('utf-8'))
         lat = float(meal['lat'])
         lng = float(meal['lng'])
@@ -74,7 +74,7 @@ class MealsHandler(DefaultHandler):
         raise Finish()
 
     @gen.coroutine
-    def delete(self):
+    def delete(self, meal_id=None):
         meal_id = self.get_query_argument("meal_id")
         db_conn = yield self.db_conn()
         yield delete_meal(meal_id, db_conn)
@@ -82,7 +82,7 @@ class MealsHandler(DefaultHandler):
         raise Finish()
 
     @gen.coroutine
-    def put(self):
+    def put(self, meal_id=None):
         meal_id = self.get_query_argument("meal_id")
         meal = self.get_query_argument("body")
         db_conn = yield self.db_conn()

@@ -1,26 +1,26 @@
 from .address import AddressHandler
+from .allergen import AllergenHandler
 from .api import APIHandler
-from .diag import HealthHandler, InfoHandler
 from .base import DefaultHandler
+from .diag import HealthHandler, InfoHandler
 from .facebook import FacebookAuthHandler
 from .google import GoogleAuthTokenHandler
+from .ingredient import IngredientHandler
+from .meal import MealHandler
 from .user import MeByTokenHandler, MeHandler, UserHandler
-from .meal import MealsHandler
-from .ingredients import IngredientsHandler
-from .allergens import AllergenHandler
 
 __all__ = [
     'AddressHandler',
+    'AllergenHandler',
     'APIHandler',
     'DefaultHandler',
     'FacebookAuthHandler',
     'GoogleAuthTokenHandler',
     'HealthHandler',
     'InfoHandler',
+    'IngredientHandler',
+    'MealHandler',
     'MeByTokenHandler',
     'MeHandler',
     'UserHandler',
-    'MealsHandler',
-    'IngredientsHandler',
-    'AllergenHandler'
 ]

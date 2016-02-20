@@ -157,17 +157,27 @@ class MeByTokenHandler(BaseBearerAuthHandler):
 
 class UserHandler(BaseBearerAuthHandler):
     @gen.coroutine
-    def delete(self, user_id):
-        pass
+    def delete(self, user_id=None):
+        if user_id is None:
+            raise HTTPError(405, reason="Cannot DELETE on collection")
 
     @gen.coroutine
-    def get(self, user_id):
-        pass
+    def get(self, user_id=None):
+        if user_id is None:
+            # FIXME: implement search for users
+            raise HTTPError(405, reason="Cannot GET on collection")
 
     @gen.coroutine
-    def patch(self, user_id):
-        pass
+    def patch(self, user_id=None):
+        if user_id is None:
+            raise HTTPError(405, reason="Cannot PATCH on collection")
 
     @gen.coroutine
-    def post(self, user_id):
-        pass
+    def post(self, user_id=None):
+        if user_id:
+            raise HTTPError(405, reason="Cannot POST with a user id")
+
+    @gen.coroutine
+    def put(self, user_id=None):
+        if user_id is None:
+            raise HTTPError(405, reason="Cannot PUT on collection")

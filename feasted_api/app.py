@@ -22,9 +22,9 @@ from .handlers import (
     MeByTokenHandler,
     MeHandler,
     UserHandler,
-    MealsHandler,
-    IngredientsHandler,
-    AllergenHandler
+    IngredientHandler,
+    AllergenHandler,
+    MealHandler,
 )
 
 
@@ -42,8 +42,8 @@ class FeastedAPIApplication(Application):
             (r'/addresses/(?P<address_id>[^\/]+)', AddressHandler),
             (r'/auth/google/jwt-auth', GoogleAuthTokenHandler),
             (r'/auth/facebook/token-auth', FacebookAuthHandler),
-            (r'/meals', MealsHandler),
-            (r'/ingredients', IngredientsHandler),
+            (r'/meals', MealHandler),
+            (r'/ingredients', IngredientHandler),
             (r'/allergens', AllergenHandler),
         ]
         settings = {

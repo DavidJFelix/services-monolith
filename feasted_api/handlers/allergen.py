@@ -3,7 +3,10 @@ import json
 
 import rethinkdb as rdb
 from tornado import gen
-from tornado.web import Finish, HTTPError
+from tornado.web import Finish
+
+from .base import DefaultHandler
+
 
 @gen.coroutine
 def get_allergens(db_conn):
@@ -15,10 +18,7 @@ def get_allergens(db_conn):
         return "[]"
 
 
-from .base import DefaultHandler
-
 class AllergenHandler(DefaultHandler):
-
     @gen.coroutine
     def get(self):
         db_conn = yield self.db_conn()
