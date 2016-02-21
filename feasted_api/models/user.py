@@ -1,7 +1,7 @@
 import json
 from collections import namedtuple
 from operator import xor
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
 import rethinkdb as rdb
 from tornado import gen
@@ -9,6 +9,10 @@ from tornado import gen
 User = namedtuple('User', [
     'user_id',
     'name',
+])
+
+UsersContainer = namedtuple('UsersContainer', [
+    'users',
 ])
 
 
@@ -22,6 +26,16 @@ def parse_rdb_user(dictionary: Optional[Dict]) -> Optional[User]:
             return User(user_id, name)
         else:
             return None
+
+
+def parse_rdb_user_container(user_list: Optional[List[Dict]]) -> UsersContainer:
+    safe_user_list = list(user_list)
+
+    users = []
+    for user in safe_user_list:
+        users.append(parse_rdb_user(user))
+
+    return UsersContainer(users)
 
 
 @gen.coroutine
@@ -57,6 +71,12 @@ def delete_user(user_id, db_conn) -> Optional[User]:
 def get_user(user_id, db_conn) -> Optional[User]:
     user = yield rdb.table("users").get(user_id).run(db_conn)
     return parse_rdb_user(user)
+
+
+@gen.coroutine
+def get_users(db_conn) -> Optional[UsersContainer]:
+    users = yield rdb.table("users").run(db_conn)
+    return parse_rdb_user_container(users)
 
 
 @gen.coroutine

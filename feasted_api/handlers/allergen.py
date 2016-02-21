@@ -10,7 +10,7 @@ from ..models.allergen import get_allergens
 
 class AllergenHandler(DefaultHandler):
     @gen.coroutine
-    def get(self):
+    def get(self, allergen_id=None):
         db_conn = yield self.db_conn()
         allergens = yield get_allergens(db_conn)
         self.write(json.dumps(allergens))

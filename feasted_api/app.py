@@ -32,19 +32,22 @@ class FeastedAPIApplication(Application):
     def __init__(self):
         routes = [
             (r'/', APIHandler),
+            (r'/addresses', AddressHandler),
+            (r'/addresses/(?P<address_id>[^\/]+)', AddressHandler),
+            (r'/allergens', AllergenHandler),
+            (r'/allergens/(?P<allergen_id>[^\/]+)', AllergenHandler),
+            (r'/auth/google/jwt-auth', GoogleAuthTokenHandler),
+            (r'/auth/facebook/token-auth', FacebookAuthHandler),
             (r'/health', HealthHandler),
             (r'/info', InfoHandler),
+            (r'/ingredients', IngredientHandler),
+            (r'/ingredients/(?<ingredient_id>[^\/]+)', IngredientHandler),
             (r'/me', MeHandler),
             (r'/me/by-token', MeByTokenHandler),
             (r'/users', UserHandler),
             (r'/users/(?P<user_id>[^\/]+)', UserHandler),
-            (r'/addresses', AddressHandler),
-            (r'/addresses/(?P<address_id>[^\/]+)', AddressHandler),
-            (r'/auth/google/jwt-auth', GoogleAuthTokenHandler),
-            (r'/auth/facebook/token-auth', FacebookAuthHandler),
             (r'/meals', MealHandler),
-            (r'/ingredients', IngredientHandler),
-            (r'/allergens', AllergenHandler),
+            (r'/meals/(?P<meal_id>[^\/]+)', MealHandler),
         ]
         settings = {
         }
