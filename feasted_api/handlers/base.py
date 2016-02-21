@@ -17,6 +17,8 @@ class DefaultHandler(RequestHandler):
             exception = kwargs['exc_info'][1]
             if isinstance(exception, HTTPError) and exception.reason:
                 reason = exception.reason
+            else:
+                reason = "Unexpected runtime exception"
 
         self.write({
             "error": status_code,
