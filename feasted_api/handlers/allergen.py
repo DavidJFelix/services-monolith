@@ -1,21 +1,11 @@
 #!/usr/bin/env python
 import json
 
-import rethinkdb as rdb
 from tornado import gen
 from tornado.web import Finish
 
 from .base import DefaultHandler
-
-
-@gen.coroutine
-def get_allergens(db_conn):
-    try:
-        allergens = yield rdb.table('allergenss').order_by('allergen').run(db_conn)
-        return allergens
-    except rdb.ReqlRuntimeError:
-        print('error reading from table')
-        return "[]"
+from ..models.allergen import get_allergens
 
 
 class AllergenHandler(DefaultHandler):
