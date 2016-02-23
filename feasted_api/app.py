@@ -41,7 +41,7 @@ class FeastedAPIApplication(Application):
             (r'/health', HealthHandler),
             (r'/info', InfoHandler),
             (r'/ingredients', IngredientHandler),
-            (r'/ingredients/(?<ingredient_id>[^\/]+)', IngredientHandler),
+            (r'/ingredients/(?P<ingredient_id>[^\/]+)', IngredientHandler),
             (r'/me', MeHandler),
             (r'/me/by-token', MeByTokenHandler),
             (r'/users', UserHandler),
