@@ -32,25 +32,26 @@ def get_meals(ll, radius, max_results, db_conn):
     # FIXME: getttoooo powers activate
     meals = []
     for meal_obj in meals_nearby:
-        meal = Meal()
-        meal.meal_id = meal_obj['doc']['id']
-        meal.name = meal_obj['doc']['name']
-        meal.description = meal_obj['doc']['description']
-        meal.portions = meal_obj['doc']['portions']
-        meal.price = meal_obj['doc']['price']
-        meal.availableFrom = meal_obj['doc']['availableFrom']
-        meal.availableTo = meal_obj['doc']['availableTo']
-        meal.ingredients = meal_obj['doc']['ingredients']
-        meal.allergens = meal_obj['doc']['allergens']
-        meal.imageUrl = meal_obj['doc']['image_url']
-        meal.isActive = meal_obj['doc']['isActive']
-        location = Location()
-        location.type = meal_obj['doc']['location']['type']
-        location.coordinates = {
-            "lng": meal_obj['doc']['location']['coordinates'][0],
-            "lat": meal_obj['doc']['location']['coordinates'][1]
-        }
-        meal.location = location._asdict()
+        meal = Meal(
+                meal_id=meal_obj['doc']['id'],
+                name=meal_obj['doc']['name'],
+                description=meal_obj['doc']['description'],
+                portions=meal_obj['doc']['portions'],
+                price=meal_obj['doc']['price'],
+                availableFrom=meal_obj['doc']['availableFrom'],
+                availableTo=meal_obj['doc']['availableTo'],
+                ingredients=meal_obj['doc']['ingredients'],
+                allergens=meal_obj['doc']['allergens'],
+                imageUrl=meal_obj['doc']['image_url'],
+                isActive=meal_obj['doc']['isActive'],
+                location=Location(
+                        type=meal_obj['doc']['location']['type'],
+                        coordinates={
+                            "lng": meal_obj['doc']['location']['coordinates'][0],
+                            "lat": meal_obj['doc']['location']['coordinates'][1]
+                        }
+                )._asdict())
+        meals.append(meal._asdict())
     return {
         "meals": meals
     }
