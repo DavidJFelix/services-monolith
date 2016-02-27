@@ -181,3 +181,7 @@ class UserHandler(BaseBearerAuthHandler):
     def put(self, user_id=None):
         if user_id is None:
             raise HTTPError(405, reason="Cannot PUT on collection")
+
+
+class UsersHandler(BaseBearerAuthHandler):
+    pass

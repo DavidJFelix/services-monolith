@@ -32,7 +32,7 @@ class FeastedAPIApplication(Application):
     def __init__(self):
         routes = [
             (r'/', APIHandler),
-            (r'/addresses', AddressHandler),
+            (r'/addresses', AddressesHandler),
             (r'/addresses/(?P<address_id>[^\/]+)', AddressHandler),
             (r'/allergens', AllergenHandler),
             (r'/allergens/(?P<allergen_id>[^\/]+)', AllergenHandler),

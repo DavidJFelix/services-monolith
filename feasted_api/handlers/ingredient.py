@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import json
 
 from tornado import gen
@@ -19,3 +18,7 @@ class IngredientHandler(DefaultHandler):
             self.write(json.dumps(ingredients))
             self.set_status(200)
             raise Finish()
+
+
+class IngredientsHandler(DefaultHandler):
+    pass

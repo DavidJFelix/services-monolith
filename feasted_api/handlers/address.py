@@ -26,3 +26,7 @@ class AddressHandler(DefaultHandler):
 
     def put(self, address_id=None):
         raise Finish()
+
+
+class AddressesHandler(DefaultHandler):
+    pass

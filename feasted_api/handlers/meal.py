@@ -1,21 +1,32 @@
-#!/usr/bin/env python
-import json
-
 import rethinkdb as rdb
 from tornado import gen
+from tornado.escape import to_unicode
 from tornado.web import Finish, HTTPError
 
 from .base import DefaultHandler
-from ..models.meal import get_meals, add_meal, delete_meal, update_meal
+from ..models.meal import get_meals, delete_meal, update_meal, get_meal, \
+    parse_meal_from_json, create_meal
 
 
 class MealHandler(DefaultHandler):
     @gen.coroutine
     def get(self, meal_id=None):
+        # Short circuit for single meal
+        if meal_id:
+            db_conn = yield self.db_conn()
+            meal = yield get_meal(meal_id, db_conn)
+            if meal:
+                self.set_status(200)
+                self.write(meal)
+                raise Finish
+        else:
+            raise HTTPError(404, reason="could not find meal")
+
         # Get query params for lat/lng
         lat_param = self.get_query_argument("lat", default=None)
         lng_param = self.get_query_argument("lng", default=None)
         if not (lat_param and lng_param):
+            # Cincinnati -- extract some time
             lat = 39.10
             lng = -84.51
         else:
@@ -43,6 +54,15 @@ class MealHandler(DefaultHandler):
         except ValueError:
             raise HTTPError(400, reason="limit must be an integer greater than 0")
 
+        # Get query param for page
+        page_param = self.get_query_argument("page", default="1")
+        try:
+            page = int(page_param)
+            if page < 1:
+                raise ValueError
+        except ValueError:
+            raise HTTPError(400, reason="page must be an integer greater than 0")
+
         # Make request to database
         db_conn = yield self.db_conn()
         meals_nearby = yield get_meals(lng_lat, radius, limit, db_conn)
@@ -51,18 +71,28 @@ class MealHandler(DefaultHandler):
             self.write(meals_nearby)
             raise Finish()
         else:
-            raise HTTPError(404, reason="Could not find find meals nearby")
+            raise HTTPError(404, reason="could not find find meals nearby")
 
     @gen.coroutine
     def post(self, meal_id=None):
-        meal = json.loads(self.request.body.decode('utf-8'))
-        lat = float(meal['lat'])
-        lng = float(meal['lng'])
-        meal['location'] = rdb.point(lng, lat)
+        if meal_id:
+            raise HTTPError(405, reason="cannot POST meal with id")
+
+        # Validate POSTed JSON
+        body = to_unicode(self.request.body)
+        meal = parse_meal_from_json(body)
+        if meal is None:
+            raise HTTPError(400, reason="malformed meal object")
+
+        # Write to the database
         db_conn = yield self.db_conn()
-        yield add_meal(meal, db_conn)
-        self.set_status(200)
-        raise Finish()
+        new_meal = yield create_meal(meal, db_conn)
+        if new_meal:
+            self.set_status(201)
+            self.write(new_meal)
+            raise Finish()
+        else:
+            raise HTTPError(500, reason="could not write meal to database")
 
     @gen.coroutine
     def delete(self, meal_id=None):
@@ -80,3 +110,7 @@ class MealHandler(DefaultHandler):
         yield update_meal(meal_id, meal, db_conn)
         self.set_status(200)
         raise Finish()
+
+
+class MealsHandler(DefaultHandler):
+    pass

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import json
 
 from tornado import gen
@@ -16,3 +15,7 @@ class AllergenHandler(DefaultHandler):
         self.write(json.dumps(allergens))
         self.set_status(200)
         raise Finish()
+
+
+class AllergensHandler(DefaultHandler):
+    pass
