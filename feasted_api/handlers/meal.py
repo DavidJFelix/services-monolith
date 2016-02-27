@@ -5,23 +5,12 @@ from tornado.web import Finish, HTTPError
 
 from .base import DefaultHandler
 from ..models.meal import get_meals, delete_meal, update_meal, get_meal, \
-    parse_meal_from_json, create_meal
+    parse_meal_from_json, create_meal, Meal2
 
 
-class MealHandler(DefaultHandler):
+class MealsHandler(DefaultHandler):
     @gen.coroutine
-    def get(self, meal_id=None):
-        # Short circuit for single meal
-        if meal_id:
-            db_conn = yield self.db_conn()
-            meal = yield get_meal(meal_id, db_conn)
-            if meal:
-                self.set_status(200)
-                self.write(meal)
-                raise Finish
-        else:
-            raise HTTPError(404, reason="could not find meal")
-
+    def get(self):
         # Get query params for lat/lng
         lat_param = self.get_query_argument("lat", default=None)
         lng_param = self.get_query_argument("lng", default=None)
@@ -74,9 +63,7 @@ class MealHandler(DefaultHandler):
             raise HTTPError(404, reason="could not find find meals nearby")
 
     @gen.coroutine
-    def post(self, meal_id=None):
-        if meal_id:
-            raise HTTPError(405, reason="cannot POST meal with id")
+    def post(self):
 
         # Validate POSTed JSON
         body = to_unicode(self.request.body)
@@ -94,23 +81,14 @@ class MealHandler(DefaultHandler):
         else:
             raise HTTPError(500, reason="could not write meal to database")
 
-    @gen.coroutine
-    def delete(self, meal_id=None):
-        meal_id = self.get_query_argument("meal_id")
+
+class MealHandler(DefaultHandler):
+    def get(self, meal_id):
         db_conn = yield self.db_conn()
-        yield delete_meal(meal_id, db_conn)
-        self.set_status(200)
-        raise Finish()
-
-    @gen.coroutine
-    def put(self, meal_id=None):
-        meal_id = self.get_query_argument("meal_id")
-        meal = self.get_query_argument("body")
-        db_conn = yield self.db_conn()
-        yield update_meal(meal_id, meal, db_conn)
-        self.set_status(200)
-        raise Finish()
-
-
-class MealsHandler(DefaultHandler):
-    pass
+        meal = yield Meal2.from_get(meal_id, db_conn)
+        if meal:
+            self.set_status(200)
+            self.write(meal)
+            raise Finish
+        else:
+            raise HTTPError(404, reason="could not find meal")

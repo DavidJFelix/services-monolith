@@ -16,12 +16,12 @@ Meal = namedtuple('Meal', [
     'portions',
     'price',
     'location',
-    'availableFrom',
-    'availableTo',
+    'available_from',
+    'available_to',
     'ingredients',
     'allergens',
-    'imageUrl',
-    'isActive',
+    'image_url',
+    'is_active',
 ])
 
 Location = namedtuple('Location', [
@@ -90,12 +90,12 @@ def get_meals(ll, radius, max_results, db_conn):
                 description=meal_obj['doc']['description'],
                 portions=meal_obj['doc']['portions'],
                 price=meal_obj['doc']['price'],
-                availableFrom=meal_obj['doc']['availableFrom'],
-                availableTo=meal_obj['doc']['availableTo'],
+                available_from=meal_obj['doc']['available_from'],
+                available_to=meal_obj['doc']['available_to'],
                 ingredients=meal_obj['doc']['ingredients'],
                 allergens=meal_obj['doc']['allergens'],
-                imageUrl=meal_obj['doc']['image_url'],
-                isActive=meal_obj['doc']['isActive'],
+                image_url=meal_obj['doc']['image_url'],
+                is_active=meal_obj['doc']['is_active'],
                 location=Location(
                         type=meal_obj['doc']['location']['type'],
                         coordinates={

@@ -14,17 +14,22 @@ from tornado.web import Application
 
 from .handlers import (
     AddressHandler,
+    AddressesHandler,
+    AllergenHandler,
+    AllergensHandler,
     APIHandler,
     FacebookAuthHandler,
     GoogleAuthTokenHandler,
     HealthHandler,
     InfoHandler,
+    IngredientHandler,
+    IngredientsHandler,
     MeByTokenHandler,
+    MealHandler,
+    MealsHandler,
     MeHandler,
     UserHandler,
-    IngredientHandler,
-    AllergenHandler,
-    MealHandler,
+    UsersHandler,
 )
 
 
@@ -34,20 +39,20 @@ class FeastedAPIApplication(Application):
             (r'/', APIHandler),
             (r'/addresses', AddressesHandler),
             (r'/addresses/(?P<address_id>[^\/]+)', AddressHandler),
-            (r'/allergens', AllergenHandler),
+            (r'/allergens', AllergensHandler),
             (r'/allergens/(?P<allergen_id>[^\/]+)', AllergenHandler),
             (r'/auth/google/jwt-auth', GoogleAuthTokenHandler),
             (r'/auth/facebook/token-auth', FacebookAuthHandler),
             (r'/health', HealthHandler),
             (r'/info', InfoHandler),
-            (r'/ingredients', IngredientHandler),
+            (r'/ingredients', IngredientsHandler),
             (r'/ingredients/(?P<ingredient_id>[^\/]+)', IngredientHandler),
             (r'/me', MeHandler),
             (r'/me/by-token', MeByTokenHandler),
-            (r'/users', UserHandler),
-            (r'/users/(?P<user_id>[^\/]+)', UserHandler),
-            (r'/meals', MealHandler),
+            (r'/meals', MealsHandler),
             (r'/meals/(?P<meal_id>[^\/]+)', MealHandler),
+            (r'/users', UsersHandler),
+            (r'/users/(?P<user_id>[^\/]+)', UserHandler),
         ]
         settings = {
         }
