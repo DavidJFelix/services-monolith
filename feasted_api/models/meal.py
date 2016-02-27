@@ -85,7 +85,7 @@ def get_meals(ll, radius, max_results, db_conn):
     meals = []
     for meal_obj in meals_nearby:
         meal = Meal(
-                meal_id=meal_obj['doc']['id'],
+                meal_id=meal_obj['doc']['meal_id'],
                 name=meal_obj['doc']['name'],
                 description=meal_obj['doc']['description'],
                 portions=meal_obj['doc']['portions'],
