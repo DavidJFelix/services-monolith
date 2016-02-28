@@ -1,5 +1,6 @@
 import json
 from collections import namedtuple
+from typing import Optional, TypeVar
 
 import rethinkdb as rdb
 from tornado import gen
@@ -7,6 +8,8 @@ from tornado import gen
 from feasted_api.models.rethinkdb import RDBTableMixin
 from .base import CollectionModel
 from .rethinkdb import RDBModel
+
+T = TypeVar('T')
 
 Meal = namedtuple('Meal', [
     'meal_id',
@@ -51,9 +54,7 @@ class Meal2(RDBModel):
     ])
 
     @classmethod
-    def from_rdb_response(cls, resp):
-        # FIXME: actually build the dictionary
-        resp_dict = {}
+    def from_rdb_response(cls: T, resp_dict) -> Optional[T]:
         return cls(**resp_dict)
 
     @classmethod
