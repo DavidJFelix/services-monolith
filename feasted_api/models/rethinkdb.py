@@ -26,10 +26,6 @@ class RDBModel(BaseModel):
             return None
 
     @classmethod
-    def from_json(cls: T, string, **kwargs):
-        return super().from_json(string, table_name=cls.table_name, **kwargs)
-
-    @classmethod
     @gen.coroutine
     def get(cls, table_name, model_id, db_conn):
         model = yield rdb.table(table_name).get(model_id).run(db_conn)

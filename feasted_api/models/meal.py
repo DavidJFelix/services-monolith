@@ -1,3 +1,4 @@
+import json
 from collections import namedtuple
 
 import rethinkdb as rdb
@@ -35,7 +36,7 @@ class Meal2(RDBModel):
         'name',
         'description',
         'portions',
-        # 'portions_available', # Uncomment me when the data is fixed
+        'portions_available',
         'price',
         'location',
         'available_from',
@@ -54,6 +55,23 @@ class Meal2(RDBModel):
         # FIXME: actually build the dictionary
         resp_dict = {}
         return cls(**resp_dict)
+
+    @classmethod
+    def from_json(cls, string):
+        try:
+            dictionary = json.loads(string)
+            lat = dictionary.get('location', {}).get('coordinates', {}).get('lat')
+            lng = dictionary.get('location', {}).get('coordinates', {}).get('lng')
+
+            if not (lat and lng):
+                raise ValueError()
+
+            dictionary['location'] = rdb.point(float(lng), float(lat))
+
+            new_model = cls(**dictionary)
+            return new_model
+        except (json.JSONDecodeError, ValueError):
+            return None
 
     @staticmethod
     @gen.coroutine
