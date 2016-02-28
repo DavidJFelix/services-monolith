@@ -1,5 +1,4 @@
 from collections import namedtuple
-from typing import Optional
 
 import rethinkdb as rdb
 from tornado import gen

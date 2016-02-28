@@ -67,7 +67,7 @@ class MealsHandler(DefaultHandler):
 
         # Validate POSTed JSON
         body = to_unicode(self.request.body)
-        meal = Meal2.from_json(body, db_conn)
+        meal = Meal2.from_json(body)
         if meal is None:
             raise HTTPError(400, reason="malformed meal object")
 

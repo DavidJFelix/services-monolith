@@ -1,5 +1,5 @@
 import json
-from typing import Dict, TypeVar, Optional, Callable
+from typing import Dict, TypeVar, Optional
 
 T = TypeVar('T')
 
@@ -19,7 +19,7 @@ class BaseModel:
         for key in self.required_fields:
             yield (key, self.__dict__[key])
 
-    @staticmethod
+    @classmethod
     def from_json(cls: T, string) -> Optional[T]:
         try:
             dictionary = json.loads(string)

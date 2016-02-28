@@ -23,7 +23,7 @@ class RDBModel(BaseModel):
         if resp.get("deleted", 0) == 1:
             changes = resp.get("changes", [])
             old_model = changes[0].get("old_val", None) if len(changes) == 1 else None
-            return self.from_rdb_response(self.__class__, old_model)
+            return self.from_rdb_response(old_model)
         else:
             return None
 
@@ -33,7 +33,7 @@ class RDBModel(BaseModel):
         model = yield rdb.table(table_name).get(model_id).run(db_conn)
         return cls.from_rdb_response(cls, model)
 
-    @staticmethod
+    @classmethod
     def from_rdb_response(cls: T, response):
         raise NotImplementedError()
 
@@ -48,7 +48,7 @@ class RDBModel(BaseModel):
         if resp.get("inserted", 0) == 1:
             changes = resp.get('changes', [])
             new_model = changes[0].get('new_val', None) if len(changes) == 1 else None
-            return self.from_rdb_response(self.__class__, new_model)
+            return self.from_rdb_response(new_model)
         else:
             return None
 
@@ -61,7 +61,7 @@ class RDBModel(BaseModel):
         if xor((resp.get("replaced", 0) == 1), (resp.get("unchanged", 0) == 1)):
             changes = resp.get("changes", [])
             new_model = changes[0].get("new_val", None) if len(changes) == 1 else None
-            return self.from_rdb_response(self.__class__, new_model)
+            return self.from_rdb_response(new_model)
         else:
             return None
 
@@ -76,7 +76,7 @@ class RDBModel(BaseModel):
         if resp.get("inserted", 0) == 1:
             changes = resp.get('changes', [])
             new_model = changes[0].get('new_val', None) if len(changes) == 1 else None
-            return self.from_rdb_response(self.__class__, new_model)
+            return self.from_rdb_response(new_model)
         else:
             return None
 
