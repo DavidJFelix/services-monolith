@@ -49,7 +49,7 @@ class Meal2(RDBModel):
         'meal_id',
     ])
 
-    @staticmethod
+    @classmethod
     def from_rdb_response(cls, resp):
         # FIXME: actually build the dictionary
         resp_dict = {}
