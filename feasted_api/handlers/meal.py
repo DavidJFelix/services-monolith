@@ -4,8 +4,7 @@ from tornado.escape import to_unicode
 from tornado.web import Finish, HTTPError
 
 from .base import DefaultHandler
-from ..models.meal import get_meals, delete_meal, update_meal, get_meal, \
-    parse_meal_from_json, create_meal, Meal2
+from ..models.meal import get_meals, Meal2
 
 
 class MealsHandler(DefaultHandler):
@@ -64,16 +63,16 @@ class MealsHandler(DefaultHandler):
 
     @gen.coroutine
     def post(self):
+        db_conn = yield self.db_conn()
 
         # Validate POSTed JSON
         body = to_unicode(self.request.body)
-        meal = parse_meal_from_json(body)
+        meal = Meal2.from_json(body, db_conn)
         if meal is None:
             raise HTTPError(400, reason="malformed meal object")
 
         # Write to the database
-        db_conn = yield self.db_conn()
-        new_meal = yield create_meal(meal, db_conn)
+        new_meal = yield meal.insert(db_conn)
         if new_meal:
             self.set_status(201)
             self.write(new_meal)

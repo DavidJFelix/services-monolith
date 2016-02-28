@@ -1,4 +1,7 @@
-from typing import Dict
+import json
+from typing import Dict, TypeVar, Optional, Callable
+
+T = TypeVar('T')
 
 
 class BaseModel:
@@ -15,6 +18,15 @@ class BaseModel:
     def __iter__(self):
         for key in self.required_fields:
             yield (key, self.__dict__[key])
+
+    @staticmethod
+    def from_json(cls: T, string) -> Optional[T]:
+        try:
+            dictionary = json.loads(string)
+            new_model = cls(**dictionary)
+            return new_model
+        except (json.JSONDecodeError, ValueError):
+            return None
 
     @staticmethod
     def validate(required_fields, field_values: Dict):

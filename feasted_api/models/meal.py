@@ -1,4 +1,3 @@
-import json
 from collections import namedtuple
 from typing import Optional
 
@@ -36,7 +35,7 @@ class Meal2(RDBModel):
         'name',
         'description',
         'portions',
-        'portions_available',
+        # 'portions_available', # Uncomment me when the data is fixed
         'price',
         'location',
         'available_from',
@@ -46,12 +45,15 @@ class Meal2(RDBModel):
         'image_url',
         'is_active',
     ])
+    optional_fields = frozenset([
+        'meal_id',
+    ])
 
     @staticmethod
     def from_rdb_response(cls, resp):
         # FIXME: actually build the dictionary
         resp_dict = {}
-        cls(**resp_dict)
+        return cls(**resp_dict)
 
     @staticmethod
     @gen.coroutine
@@ -66,14 +68,6 @@ class MealCollection(CollectionModel, RDBTableMixin):
         'meals',
     ])
     collection_of = Meal2
-
-
-def parse_meal_from_json(string):
-    try:
-        meal = json.loads(string)
-    except json.JSONDecodeError:
-        return None
-    return meal
 
 
 @gen.coroutine
@@ -107,41 +101,3 @@ def get_meals(ll, radius, max_results, db_conn):
     return {
         "meals": meals
     }
-
-
-@gen.coroutine
-def get_meal(meal_id, db_conn):
-    pass
-
-
-@gen.coroutine
-def delete_meal(meal_id, db_conn):
-    is_updated = yield rdb.table('meals').get(meal_id).update({'isActive': False}).run(db_conn)
-    return is_updated
-
-
-@gen.coroutine
-def update_meal(meal_id, meal, db_conn):
-    updated_meal = yield rdb.table('meals').get(meal_id).update(meal).run(db_conn)
-    return updated_meal
-
-
-@gen.coroutine
-def create_meal(meal, db_conn):
-    added_meal = yield rdb.table('meals').insert(meal).run(db_conn)
-    return added_meal
-
-
-@gen.coroutine
-def create_meal(meal, db_conn) -> Optional[Meal]:
-    resp = yield rdb.table('meal'). \
-        insert(
-            dict(meal),
-            durability='hard', return_changes='always'). \
-        run(db_conn)
-    if resp.get("inserted", 0) == 1:
-        changes = resp.get('changes', [])
-        new_meal = changes[0].get('new_val', None) if len(changes) == 1 else None
-        return parse_rdb_meal(new_meal)
-    else:
-        return None
