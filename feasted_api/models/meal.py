@@ -30,6 +30,7 @@ Location = namedtuple('Location', [
 
 # Not yet being used. Ignore
 class Meal2(RDBModel):
+    table_name = 'meals'
     required_fields = frozenset([
         'name',
         'description',

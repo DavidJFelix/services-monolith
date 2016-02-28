@@ -10,9 +10,7 @@ T = TypeVar('T')
 
 
 class RDBModel(BaseModel):
-    def __init__(self, table_name, **kwargs):
-        self.table_name = table_name
-        super().__init__(**kwargs)
+    table_name = None
 
     @gen.coroutine
     def delete(self, model_id, db_conn):
@@ -27,11 +25,15 @@ class RDBModel(BaseModel):
         else:
             return None
 
-    @staticmethod
+    @classmethod
+    def from_json(cls: T, string, **kwargs):
+        return super().from_json(string, table_name=cls.table_name, **kwargs)
+
+    @classmethod
     @gen.coroutine
     def get(cls, table_name, model_id, db_conn):
         model = yield rdb.table(table_name).get(model_id).run(db_conn)
-        return cls.from_rdb_response(cls, model)
+        return cls.from_rdb_response(model)
 
     @classmethod
     def from_rdb_response(cls: T, response):

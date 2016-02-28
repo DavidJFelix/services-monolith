@@ -20,10 +20,10 @@ class BaseModel:
             yield (key, self.__dict__[key])
 
     @classmethod
-    def from_json(cls: T, string) -> Optional[T]:
+    def from_json(cls: T, string, **kwargs) -> Optional[T]:
         try:
             dictionary = json.loads(string)
-            new_model = cls(**dictionary)
+            new_model = cls(**kwargs, **dictionary)
             return new_model
         except (json.JSONDecodeError, ValueError):
             return None
