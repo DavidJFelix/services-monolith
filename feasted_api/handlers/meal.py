@@ -81,9 +81,10 @@ class MealsHandler(DefaultHandler):
 
 
 class MealHandler(DefaultHandler):
+    @gen.coroutine
     def get(self, meal_id):
         db_conn = yield self.db_conn()
-        meal = yield from_get(Meal, meal_id, db_conn)
+        meal = yield from_get(meal_id, db_conn)
         if meal:
             self.set_status(200)
             self.write(meal.to_serializable())

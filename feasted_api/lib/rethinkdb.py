@@ -21,8 +21,8 @@ def delete(table: str, model_id, db_conn) -> Optional[Dict]:
 
 
 @gen.coroutine
-def get(cls: BaseModel, model_id, db_conn) -> Optional[Dict]:
-    resp = yield rdb.table(cls.table).get(model_id).run(db_conn)
+def get(table: str, model_id, db_conn) -> Optional[Dict]:
+    resp = yield rdb.table(table).get(model_id).run(db_conn)
     return resp if resp else None
 
 
