@@ -23,10 +23,8 @@ class BaseValue:
 
 
 class BaseModel:
-    fields = {
-        'id': IntegerValue,
-    }
-    id_field = 'id'
+    fields = {}
+    id_field = None
     values = {}
 
     def __init__(self, **field_values):
@@ -130,4 +128,3 @@ class UUIDValue(BaseValue):
         # Force the value into a string for UUID parsing
         # UUID will ValueError if it's not valid
         uuid.UUID(str(value))
-
