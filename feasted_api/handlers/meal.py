@@ -52,10 +52,10 @@ class MealsHandler(DefaultHandler):
 
         # Make request to database
         db_conn = yield self.db_conn()
-        meals_nearby = yield from_get_nearest(Meal, db_conn, lng_lat, radius, max_results=limit)
+        meals_nearby = yield from_get_nearest(db_conn, lng_lat, radius, max_results=limit)
         if meals_nearby:
             self.set_status(200)
-            self.write(meals_nearby)
+            self.write({"meals": [meal.values for meal in meals_nearby]})
             raise Finish()
         else:
             raise HTTPError(404, reason="could not find find meals nearby")

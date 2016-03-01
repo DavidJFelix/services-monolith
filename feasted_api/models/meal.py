@@ -26,6 +26,19 @@ class Meal(BaseModel):
     table = 'meals'
     id_field = 'meal_id'
 
+    def __init__(self, **field_values):
+        # Handle a few of these fields specially
+        new_field_values = field_values
+
+        # Remove ugly rethink location properties
+        location = new_field_values.pop('location', {})
+        location.pop('$reql_type$', None)
+        if location:
+            self.values['location'] = location
+
+        # call original constructor for the rest
+        super().__init__(**new_field_values)
+
 
 def from_rethink(response: Dict):
     return Meal(**response)
