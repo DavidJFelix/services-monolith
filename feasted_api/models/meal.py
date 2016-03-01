@@ -1,7 +1,4 @@
-from .base import (
-    BaseCollectionModel,
-    BaseModel,
-)
+from .base import BaseModel
 
 
 class Meal(BaseModel):
@@ -24,9 +21,3 @@ class Meal(BaseModel):
     rethink_table = 'meals'
     id_field = 'meal_id'
 
-
-class MealCollection(BaseCollectionModel):
-    field = 'meals'
-    rethink_table = 'meals'
-    location_index = 'location'
-    item = Meal
