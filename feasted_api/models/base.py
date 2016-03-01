@@ -1,23 +1,53 @@
 import json
-from typing import Dict, TypeVar, Optional
+import uuid
+from typing import TypeVar, Optional
 
 T = TypeVar('T')
 
 
+class BaseValue:
+    value = None
+    storage_type = None
+
+    def __init__(self, value):
+        self.validate(value)
+        self.value = value
+
+    @classmethod
+    def validate(cls, value):
+        if not isinstance(value, cls.storage_type):
+            raise ValueError(value, "is not a", cls.storage_type.__class__)
+
+    def to_serializable(self):
+        return self.value
+
+
 class BaseModel:
-    required_fields = frozenset()
+    fields = {
+        'id': IntegerValue,
+    }
+    id_field = 'id'
+    values = {}
 
-    def __init__(self, **kwargs: Dict):
-        # Check that required fields exist
-        BaseModel.validate(self.required_fields, kwargs)
+    def __init__(self, **field_values):
+        self.__class__.validate(**field_values)
+        for field, value in self.fields.items():
+            candidate_value = field_values.get(field)
+            if isinstance(value, list):
+                try:
+                    value = value[0]
+                    self.values[field] = [value(cand) for cand in candidate_value]
+                except (IndexError, TypeError):
+                    raise ValueError('malformed model list defintion or call')
+            else:
+                self.values[field] = value(candidate_value)
 
-        # Set all of the keys in this object to the same values of the keys in init
-        for k, v in kwargs.items():
-            self.__dict__[k] = v
-
-    def __iter__(self):
-        for key in self.required_fields:
-            yield (key, self.__dict__[key])
+    @classmethod
+    def validate(cls, **field_values):
+        for field, value in field_values.items():
+            field_type = cls.fields.get(field, None)
+            if field_type:
+                field_type.validate(value)
 
     @classmethod
     def from_json(cls: T, string) -> Optional[T]:
@@ -28,16 +58,76 @@ class BaseModel:
         except (json.JSONDecodeError, ValueError):
             return None
 
-    @staticmethod
-    def validate(required_fields, field_values: Dict):
-        candidate = frozenset(field_values.keys())
-
-        # Check if field values is missing required fields
-        missing_required = required_fields - candidate
-        if missing_required != frozenset():
-            raise ValueError('Missing required fields: ',
-                             ' '.join(field for field in missing_required))
+    def to_serializable(self):
+        dictionary = {}
+        for field, value in self.values.items():
+            dictionary[field] = value.to_serializable()
+        return dictionary
 
 
-class CollectionModel:
+class BaseCollectionModel:
     pass
+
+
+class BooleanValue(BaseValue):
+    storage_type = bool
+
+
+class StringValue(BaseValue):
+    storage_type = str
+
+
+class IntegerValue(BaseValue):
+    storage_type = int
+
+
+class DateTimeValue(BaseValue):
+    def to_serializable(self):
+        pass
+
+    @classmethod
+    def validate(cls, value):
+        pass
+
+
+class URLValue(BaseValue):
+    @classmethod
+    def validate(cls, value):
+        pass
+
+    def to_serializable(self):
+        pass
+
+
+class PriceValue(BaseValue):
+    storage_type = str
+
+    @classmethod
+    def validate(cls, value):
+        # Check if it's a string
+        super().validate(value)
+
+        # Check if the value is numeric. Note: str.isnumeric and str.isdecimal don't seem to work
+        float(value)
+
+        # Ensure only 2 decimal places exist and exactly 1 decimal exists
+        halves = value.split('.')
+        if len(halves) != 2 or len(halves[1]) != 2:
+            raise ValueError(value, 'is not a valid price')
+
+
+class UUIDValue(BaseValue):
+    def __init__(self, value):
+        self.validate(value)
+        # We only get to this line if value is a string because of validate
+        self.value = uuid.UUID(value)
+
+    def to_serializable(self):
+        return str(self.value)
+
+    @classmethod
+    def validate(cls, value):
+        # Force the value into a string for UUID parsing
+        # UUID will ValueError if it's not valid
+        uuid.UUID(str(value))
+

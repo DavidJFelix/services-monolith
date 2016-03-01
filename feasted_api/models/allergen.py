@@ -18,3 +18,7 @@ def get_allergens(db_conn):
     except rdb.ReqlRuntimeError:
         print('error reading from table')
         return "[]"
+
+
+class AllergenCollection:
+    pass

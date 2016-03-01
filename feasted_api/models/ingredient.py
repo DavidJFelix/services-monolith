@@ -41,3 +41,10 @@ def parse_rdb_ingredient_container(ingredient_list: Optional[List[Dict]]) -> Ing
 def get_ingredients(db_conn) -> Optional[Ingredient]:
     ingredients = yield rdb.table('ingredients').order_by('ingredient').run(db_conn)
     return parse_rdb_ingredient_container(ingredients)
+
+
+class IngredientCollection:
+    pass
+
+class Ingredient:
+    pass

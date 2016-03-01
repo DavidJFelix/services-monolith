@@ -4,7 +4,7 @@ from tornado.escape import to_unicode
 from tornado.web import Finish, HTTPError
 
 from .base import DefaultHandler
-from ..models.meal import get_meals, Meal2
+from ..models.meal import Meal
 
 
 class MealsHandler(DefaultHandler):
@@ -53,7 +53,7 @@ class MealsHandler(DefaultHandler):
 
         # Make request to database
         db_conn = yield self.db_conn()
-        meals_nearby = yield get_meals(lng_lat, radius, limit, db_conn)
+        meals_nearby = yield fixme(lng_lat, radius, limit, db_conn)
         if meals_nearby:
             self.set_status(200)
             self.write(meals_nearby)
@@ -67,7 +67,7 @@ class MealsHandler(DefaultHandler):
 
         # Validate POSTed JSON
         body = to_unicode(self.request.body)
-        meal = Meal2.from_json(body)
+        meal = Meal.from_json(body)
         if meal is None:
             raise HTTPError(400, reason="malformed meal object")
 
@@ -75,7 +75,7 @@ class MealsHandler(DefaultHandler):
         new_meal = yield meal.insert(db_conn)
         if new_meal:
             self.set_status(201)
-            self.write(new_meal)
+            self.write(meal.to_serializable())
             raise Finish()
         else:
             raise HTTPError(500, reason="could not write meal to database")
@@ -84,10 +84,10 @@ class MealsHandler(DefaultHandler):
 class MealHandler(DefaultHandler):
     def get(self, meal_id):
         db_conn = yield self.db_conn()
-        meal = yield Meal2.from_get(meal_id, db_conn)
+        meal = yield Meal.from_get(meal_id, db_conn)
         if meal:
             self.set_status(200)
-            self.write(meal)
+            self.write(meal.to_serializable())
             raise Finish
         else:
             raise HTTPError(404, reason="could not find meal")
