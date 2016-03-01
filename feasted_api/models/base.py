@@ -7,7 +7,6 @@ T = TypeVar('T')
 class BaseModel:
     fields = {}
     id_field = None
-    table = None
     values = {}
 
     def __init__(self, **field_values):
@@ -27,9 +26,3 @@ class BaseModel:
             return cls(**dictionary)
         except (json.JSONDecodeError, ValueError):
             return cls()
-
-    def to_serializable(self):
-        dictionary = {}
-        for field, value in self.values.items():
-            dictionary[field] = value.to_serializable()
-        return dictionary

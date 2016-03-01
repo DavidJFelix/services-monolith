@@ -3,7 +3,7 @@ from tornado.escape import to_unicode
 from tornado.web import Finish, HTTPError
 
 from .base import DefaultHandler
-from ..models.meal import Meal, from_get, from_get_nearest
+from ..models.meal import Meal, from_get, from_get_nearest, insert
 
 
 class MealsHandler(DefaultHandler):
@@ -87,7 +87,7 @@ class MealHandler(DefaultHandler):
         meal = yield from_get(meal_id, db_conn)
         if meal:
             self.set_status(200)
-            self.write(meal.to_serializable())
+            self.write(meal.values)
             raise Finish
         else:
             raise HTTPError(404, reason="could not find meal")

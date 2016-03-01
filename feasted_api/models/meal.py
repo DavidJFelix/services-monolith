@@ -23,7 +23,7 @@ class Meal(BaseModel):
         'images',
         'is_active',
     )
-    rethink_table = 'meals'
+    table = 'meals'
     id_field = 'meal_id'
 
 
@@ -42,4 +42,8 @@ def from_get(meal_id, db_conn) -> Optional[Meal]:
 
 @gen.coroutine
 def from_get_nearest(lng_lat, db):
+    pass
+
+@gen.coroutine
+def insert():
     pass
