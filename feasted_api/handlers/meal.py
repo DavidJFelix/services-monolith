@@ -2,9 +2,8 @@ from tornado import gen
 from tornado.escape import to_unicode
 from tornado.web import Finish, HTTPError
 
-from feasted_api.lib.rethinkdb import from_get_nearest, from_get, insert
 from .base import DefaultHandler
-from ..models.meal import Meal
+from ..models.meal import Meal, from_get, from_get_nearest
 
 
 class MealsHandler(DefaultHandler):
