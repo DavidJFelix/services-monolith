@@ -25,6 +25,7 @@ class BaseValue:
 class BaseModel:
     fields = {}
     id_field = None
+    table = None
     values = {}
 
     def __init__(self, **field_values):
@@ -39,6 +40,10 @@ class BaseModel:
                     raise ValueError('malformed model list defintion or call')
             else:
                 self.values[field] = value(candidate_value)
+
+    @property
+    def model_id(self):
+        return self.fields.get(self.id_field, None)
 
     @classmethod
     def validate(cls, **field_values):

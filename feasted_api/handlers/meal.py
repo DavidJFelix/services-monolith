@@ -1,8 +1,8 @@
-import rethinkdb as rdb
 from tornado import gen
 from tornado.escape import to_unicode
 from tornado.web import Finish, HTTPError
 
+from feasted_api.lib.rethinkdb import from_get_nearest, from_get, insert
 from .base import DefaultHandler
 from ..models.meal import Meal
 
@@ -24,7 +24,7 @@ class MealsHandler(DefaultHandler):
             except ValueError:
                 raise HTTPError(400, reason="lat and lng should be numbers")
 
-        lng_lat = rdb.point(lng, lat)
+        lng_lat = (lng, lat)
 
         # Get query param for range
         radius_param = self.get_query_argument("radius", default="5")
@@ -53,7 +53,7 @@ class MealsHandler(DefaultHandler):
 
         # Make request to database
         db_conn = yield self.db_conn()
-        meals_nearby = yield fixme(lng_lat, radius, limit, db_conn)
+        meals_nearby = yield from_get_nearest(Meal, db_conn, lng_lat, radius, max_results=limit)
         if meals_nearby:
             self.set_status(200)
             self.write(meals_nearby)
@@ -72,7 +72,7 @@ class MealsHandler(DefaultHandler):
             raise HTTPError(400, reason="malformed meal object")
 
         # Write to the database
-        new_meal = yield meal.insert(db_conn)
+        new_meal = yield insert(meal, db_conn)
         if new_meal:
             self.set_status(201)
             self.write(meal.to_serializable())
@@ -84,7 +84,7 @@ class MealsHandler(DefaultHandler):
 class MealHandler(DefaultHandler):
     def get(self, meal_id):
         db_conn = yield self.db_conn()
-        meal = yield Meal.from_get(meal_id, db_conn)
+        meal = yield from_get(Meal, meal_id, db_conn)
         if meal:
             self.set_status(200)
             self.write(meal.to_serializable())

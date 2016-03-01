@@ -12,14 +12,9 @@ from .base import (
 )
 from .ingredient import Ingredient
 from .location import Location
-from .rethinkdb import (
-    RethinkCollectionMixin,
-    RethinkLocationMixin,
-    RethinkSingleMixin,
-)
 
 
-class Meal(BaseModel, RethinkSingleMixin):
+class Meal(BaseModel):
     fields = {
         'meal_id': UUIDValue,
         'name': StringValue,
@@ -40,7 +35,7 @@ class Meal(BaseModel, RethinkSingleMixin):
     id_field = 'meal_id'
 
 
-class MealCollection(BaseCollectionModel, RethinkCollectionMixin, RethinkLocationMixin):
+class MealCollection(BaseCollectionModel):
     field = 'meals'
     rethink_table = 'meals'
     location_index = 'location'
