@@ -71,6 +71,7 @@ class MealsHandler(DefaultHandler):
         body = to_unicode(self.request.body)
         meal = Meal.from_json(body)
         if meal is None:
+            # FIXME: validate here!
             raise HTTPError(400, reason="malformed meal object")
 
         # Write to the database

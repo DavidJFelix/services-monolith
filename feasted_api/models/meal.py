@@ -1,3 +1,4 @@
+import rethinkdb as rdb
 from typing import Dict, Optional, Tuple, List
 
 from tornado import gen
@@ -43,6 +44,11 @@ class Meal(BaseModel):
         # call original constructor for the rest
         super().__init__(**new_field_values)
 
+    def for_rethink(self) -> Dict:
+        dictionary = self.values
+        dictionary['location'] = rdb.point(*self.values.get('location', {}).get('coordinates'))
+        return dictionary
+
 
 def from_rethink(response: Dict):
     return Meal(**response)
@@ -66,5 +72,5 @@ def from_get_nearest(db_conn,
 
 @gen.coroutine
 def from_insert(meal: Meal, db_conn) -> Optional[Meal]:
-    resp = yield insert(meal, db_conn)
+    resp = yield insert(meal.table, meal.for_rethink(), db_conn)
     return from_rethink(resp) if resp else None

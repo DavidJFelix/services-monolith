@@ -52,10 +52,10 @@ def get_nearest(table: str,
 
 
 @gen.coroutine
-def insert(model: BaseModel, db_conn) -> Optional[Dict]:
-    resp = yield rdb.table(model.table). \
+def insert(table: str, model: Dict, db_conn) -> Optional[Dict]:
+    resp = yield rdb.table(table). \
         insert(
-            model.values,
+            model,
             durability='hard', return_changes='always'). \
         run(db_conn)
 
