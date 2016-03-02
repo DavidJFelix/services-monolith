@@ -29,7 +29,7 @@ def get(table: str, model_id, db_conn) -> Optional[Dict]:
 @gen.coroutine
 def get_nearest(table: str,
                 db_conn,
-                lng_lat: Tuple[float] = (-84.51, 39.10),
+                lng_lat: Tuple[float, float] = (-84.51, 39.10),
                 max_dist: int = 10,
                 units: str = 'mi',
                 max_results: int = 20) -> List[Dict]:
@@ -53,7 +53,7 @@ def get_nearest(table: str,
 def insert(model: BaseModel, db_conn) -> Optional[Dict]:
     resp = yield rdb.table(model.table). \
         insert(
-            model.to_serializable(),
+            model.values,
             durability='hard', return_changes='always'). \
         run(db_conn)
 
@@ -68,7 +68,7 @@ def insert(model: BaseModel, db_conn) -> Optional[Dict]:
 def update(model: BaseModel, db_conn) -> Optional[Dict]:
     resp = yield rdb.table(model.table). \
         get(model.model_id). \
-        update(model.to_serializable(), durability='hard', return_changes='always'). \
+        update(model.values, durability='hard', return_changes='always'). \
         run(db_conn)
     if xor((resp.get("replaced", 0) == 1), (resp.get("unchanged", 0) == 1)):
         changes = resp.get("changes", [])

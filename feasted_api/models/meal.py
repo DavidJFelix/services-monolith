@@ -1,9 +1,13 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple, List
 
 from tornado import gen
 
 from .base import BaseModel
-from ..lib.rethinkdb import get
+from ..lib.rethinkdb import (
+    get,
+    get_nearest,
+    insert,
+)
 
 
 class Meal(BaseModel):
@@ -47,16 +51,20 @@ def from_rethink(response: Dict):
 @gen.coroutine
 def from_get(meal_id, db_conn) -> Optional[Meal]:
     resp = yield get(Meal.table, meal_id, db_conn)
-    if resp:
-        return from_rethink(resp)
-    else:
-        return None
+    return from_rethink(resp) if resp else None
 
 
 @gen.coroutine
-def from_get_nearest(lng_lat, db):
-    pass
+def from_get_nearest(db_conn,
+                     lng_lat: Tuple[float, float] = (-84.51, 39.10),
+                     max_dist: int = 10,
+                     units: str = 'mi',
+                     max_results=20) -> List[Meal]:
+    resp = yield get_nearest(Meal.table, db_conn, lng_lat, max_dist, units, max_results)
+    return [from_rethink(each) for each in resp] if resp else []
+
 
 @gen.coroutine
-def insert():
-    pass
+def from_insert(meal: Meal, db_conn) -> Optional[Meal]:
+    resp = yield insert(meal, db_conn)
+    return from_rethink(resp) if resp else None

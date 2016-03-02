@@ -3,7 +3,7 @@ from tornado.escape import to_unicode
 from tornado.web import Finish, HTTPError
 
 from .base import DefaultHandler
-from ..models.meal import Meal, from_get, from_get_nearest, insert
+from ..models.meal import Meal, from_get, from_get_nearest, from_insert
 
 
 class MealsHandler(DefaultHandler):
@@ -71,7 +71,7 @@ class MealsHandler(DefaultHandler):
             raise HTTPError(400, reason="malformed meal object")
 
         # Write to the database
-        new_meal = yield insert(meal, db_conn)
+        new_meal = yield from_insert(meal, db_conn)
         if new_meal:
             self.set_status(201)
             self.write(meal.to_serializable())

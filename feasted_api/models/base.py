@@ -6,7 +6,8 @@ T = TypeVar('T')
 
 class BaseModel:
     fields = {}
-    id_field = None
+    id_field = ''
+    table = ''
     values = {}
 
     def __init__(self, **field_values):
@@ -25,4 +26,4 @@ class BaseModel:
             dictionary = json.loads(string)
             return cls(**dictionary)
         except (json.JSONDecodeError, ValueError):
-            return cls()
+            return None
