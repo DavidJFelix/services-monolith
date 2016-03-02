@@ -35,6 +35,7 @@ def get_nearest(table: str,
                 max_results: int = 20) -> List[Dict]:
     resp = yield rdb.table(table). \
         get_nearest(rdb.point(*lng_lat),
+                    index='location',
                     max_dist=max_dist,
                     unit=unit,
                     max_results=max_results). \
