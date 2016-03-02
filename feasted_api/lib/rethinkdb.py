@@ -46,6 +46,7 @@ def get_nearest(table: str,
             doc = item.get('doc')
             if doc:
                 models.append(doc)
+        return models
     else:
         return []
 

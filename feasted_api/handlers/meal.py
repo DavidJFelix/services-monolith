@@ -26,14 +26,14 @@ class MealsHandler(DefaultHandler):
         lng_lat = (lng, lat)
 
         # Get query param for range
-        radius_param = self.get_query_argument("radius", default="5")
+        radius_param = self.get_query_argument("radius", default="10")
         try:
             radius = int(radius_param)
         except ValueError:
             raise HTTPError(400, reason="radius should be an integer")
 
         # Get query param for limit
-        limit_param = self.get_query_argument("max_results", default="20")
+        limit_param = self.get_query_argument("limit", default="20")
         try:
             limit = int(limit_param)
             if limit < 1:
@@ -52,7 +52,10 @@ class MealsHandler(DefaultHandler):
 
         # Make request to database
         db_conn = yield self.db_conn()
-        meals_nearby = yield from_get_nearest(db_conn, lng_lat, radius, max_results=limit)
+        meals_nearby = yield from_get_nearest(db_conn,
+                                              lng_lat=lng_lat,
+                                              max_dist=radius,
+                                              max_results=limit)
         if meals_nearby:
             self.set_status(200)
             self.write({"meals": [meal.values for meal in meals_nearby]})
