@@ -78,7 +78,7 @@ class MealsHandler(DefaultHandler):
         new_meal = yield from_insert(meal, db_conn)
         if new_meal:
             self.set_status(201)
-            self.write(meal.to_serializable())
+            self.write(meal.values)
             raise Finish()
         else:
             raise HTTPError(500, reason="could not write meal to database")
