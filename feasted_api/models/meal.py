@@ -58,9 +58,9 @@ def from_get(meal_id, db_conn) -> Optional[Meal]:
 def from_get_nearest(db_conn,
                      lng_lat: Tuple[float, float] = (-84.51, 39.10),
                      max_dist: int = 10,
-                     units: str = 'mi',
+                     unit: str = 'mi',
                      max_results=20) -> List[Meal]:
-    resp = yield get_nearest(Meal.table, db_conn, lng_lat, max_dist, units, max_results)
+    resp = yield get_nearest(Meal.table, db_conn, lng_lat, max_dist, unit, max_results)
     return [from_rethink(each) for each in resp] if resp else []
 
 

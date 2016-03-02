@@ -31,12 +31,12 @@ def get_nearest(table: str,
                 db_conn,
                 lng_lat: Tuple[float, float] = (-84.51, 39.10),
                 max_dist: int = 10,
-                units: str = 'mi',
+                unit: str = 'mi',
                 max_results: int = 20) -> List[Dict]:
     resp = yield rdb.table(table). \
         get_nearest(rdb.point(*lng_lat),
                     max_dist=max_dist,
-                    units=units,
+                    unit=unit,
                     max_results=max_results). \
         run(db_conn)
     if len(resp) > 0:
