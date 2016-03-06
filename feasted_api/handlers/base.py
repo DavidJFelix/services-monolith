@@ -39,24 +39,34 @@ class DefaultHandler(RequestHandler):
         conn = yield self.application.db_conn()
         return conn
 
+    @gen.coroutine
     def delete(self, *args, **kwargs):
         raise HTTPError(405, reason="method not allowed")
 
+    @gen.coroutine
     def get(self, *args, **kwargs):
         raise HTTPError(405, reason="method not allowed")
 
+    @gen.coroutine
     def head(self, *args, **kwargs):
         raise HTTPError(405, reason="method not allowed")
 
+    # FIXME: return default to a 405. For now, lie to bypasss CORS
+    @gen.coroutine
     def options(self, *args, **kwargs):
-        raise HTTPError(405, reason="method not allowed")
+        # raise HTTPError(405, reason="method not allowed")
+        # LIE LIE LIE
+        self.set_header("Allow", "GET, DELETE, HEAD, OPTIONS, PATCH, POST, PUT")
 
+    @gen.coroutine
     def patch(self, *args, **kwargs):
         raise HTTPError(405, reason="method not allowed")
 
+    @gen.coroutine
     def post(self, *args, **kwargs):
         raise HTTPError(405, reason="method not allowed")
 
+    @gen.coroutine
     def put(self, *args, **kwargs):
         raise HTTPError(405, reason="method not allowed")
 
