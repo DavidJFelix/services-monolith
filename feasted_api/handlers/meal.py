@@ -95,3 +95,7 @@ class MealHandler(DefaultHandler):
             raise Finish
         else:
             raise HTTPError(404, reason="could not find meal")
+
+    @gen.coroutine
+    def delete(self, meal_id):
+        pass

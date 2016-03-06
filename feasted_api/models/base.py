@@ -1,11 +1,11 @@
 import json
-from typing import TypeVar
+from typing import TypeVar, Optional
 
 T = TypeVar('T')
 
 
 class BaseModel:
-    fields = {}
+    fields = ()
     id_field = ''
     table = ''
     values = {}
@@ -21,7 +21,7 @@ class BaseModel:
         return self.fields.get(self.id_field, None)
 
     @classmethod
-    def from_json(cls: T, string) -> T:
+    def from_json(cls: T, string) -> Optional[T]:
         try:
             dictionary = json.loads(string)
             return cls(**dictionary)

@@ -31,6 +31,9 @@ class DefaultHandler(RequestHandler):
             "details": reason
         })
 
+    def set_default_headers(self):
+        self.set_header('Access-Control-Content-Origin', 'api-doc.davidjfelix.com')
+
     @gen.coroutine
     def db_conn(self):
         conn = yield self.application.db_conn()

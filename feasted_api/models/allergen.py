@@ -13,7 +13,7 @@ Allergen = namedtuple('Allergen', [
 @gen.coroutine
 def get_allergens(db_conn):
     try:
-        allergens = yield rdb.table('allergenss').order_by('allergen').run(db_conn)
+        allergens = yield rdb.table('allergens').order_by('allergen').run(db_conn)
         return allergens
     except rdb.ReqlRuntimeError:
         print('error reading from table')

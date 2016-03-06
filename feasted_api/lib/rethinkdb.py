@@ -87,6 +87,7 @@ def upsert(model: BaseModel, db_conn) -> Optional[Dict]:
             durability='hard', return_changes='always', conflict='update'). \
         run(db_conn)
 
+    # FIXME: or updated
     if resp.get("inserted", 0) == 1:
         changes = resp.get('changes', [])
         return changes[0].get('new_val', None) if len(changes) == 1 else None
