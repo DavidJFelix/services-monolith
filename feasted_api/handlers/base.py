@@ -32,7 +32,7 @@ class DefaultHandler(RequestHandler):
         })
 
     def set_default_headers(self):
-        self.set_header('Access-Control-Allow-Origin', 'api-doc.davidjfelix.com')
+        self.set_header('Access-Control-Allow-Origin', '*')
 
     @gen.coroutine
     def db_conn(self):
