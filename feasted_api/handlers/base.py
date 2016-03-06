@@ -33,6 +33,10 @@ class DefaultHandler(RequestHandler):
 
     def set_default_headers(self):
         self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Access-Control-Allow-Methods',
+                        'DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT')
+        request_headers = self.request.headers.get('Access-Control-Request-Headers', '')
+        self.set_header('Access-Control-Allow-Headers', request_headers)
 
     @gen.coroutine
     def db_conn(self):
@@ -56,7 +60,7 @@ class DefaultHandler(RequestHandler):
     def options(self, *args, **kwargs):
         # raise HTTPError(405, reason="method not allowed")
         # LIE LIE LIE
-        self.set_header("Allow", "GET, DELETE, HEAD, OPTIONS, PATCH, POST, PUT")
+        self.set_header("Allow", "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT")
 
     @gen.coroutine
     def patch(self, *args, **kwargs):
