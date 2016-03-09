@@ -93,3 +93,14 @@ def upsert(model: BaseModel, db_conn) -> Optional[Dict]:
         return changes[0].get('new_val', None) if len(changes) == 1 else None
     else:
         return None
+
+@gen.coroutine
+def get_all_and_order_by(table: str, order_attribute: str, db_conn) -> List[Dict]:
+    resp = yield rdb.table(table).order_by(order_attribute).run(db_conn)
+    if len(resp) > 0:
+        models = []
+        for item in resp:
+            models.append(item)
+        return models
+    else:
+        return []
