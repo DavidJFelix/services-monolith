@@ -3,6 +3,10 @@ from typing import Optional, Dict, List
 
 import rethinkdb as rdb
 from tornado import gen
+from ..lib.rethinkdb import (
+    get_all_and_order_by
+)
+
 
 Ingredient = namedtuple('Ingredient', [
     'ingredient_id',
@@ -38,9 +42,9 @@ def parse_rdb_ingredient_container(ingredient_list: Optional[List[Dict]]) -> Ing
 
 
 @gen.coroutine
-def get_ingredients(db_conn) -> Optional[Ingredient]:
-    ingredients = yield rdb.table('ingredients').order_by('ingredient').run(db_conn)
-    return parse_rdb_ingredient_container(ingredients)
+def get_ingredients(db_conn):
+    ingredients = yield get_all_and_order_by('ingredients', 'name', db_conn)
+    return {'ingredients':ingredients}
 
 
 class IngredientCollection:

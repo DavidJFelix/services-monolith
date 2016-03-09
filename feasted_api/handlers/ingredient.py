@@ -7,18 +7,15 @@ from .base import DefaultHandler
 from ..models.ingredient import get_ingredients
 
 
-class IngredientHandler(DefaultHandler):
+class IngredientsHandler(DefaultHandler):
     @gen.coroutine
     def get(self, ingredient_id=None):
         db_conn = yield self.db_conn()
-        if ingredient_id:
-            raise HTTPError(405, reason="Cannot GET on single ingredient id")
-        else:
-            ingredients = yield get_ingredients(db_conn)
-            self.write(json.dumps(ingredients))
-            self.set_status(200)
-            raise Finish()
+        ingredients = yield get_ingredients(db_conn)
+        self.write(ingredients)
+        self.set_status(200)
+        raise Finish()
 
 
-class IngredientsHandler(DefaultHandler):
+class IngredientHandler(DefaultHandler):
     pass

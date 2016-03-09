@@ -1,4 +1,3 @@
-import rethinkdb as rdb
 from tornado import gen
 from ..lib.rethinkdb import (
     get_all_and_order_by
