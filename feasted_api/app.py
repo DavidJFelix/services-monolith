@@ -6,6 +6,7 @@ from json import JSONDecodeError
 from typing import List, Optional
 
 import rethinkdb as rdb
+from raven.contrib.tornado import AsyncSentryClient
 from tornado import gen
 from tornado.escape import json_decode
 from tornado.httpclient import AsyncHTTPClient
@@ -60,6 +61,9 @@ class FeastedAPIApplication(Application):
         self.server_id = uuid.uuid4()
         self.start_time = datetime.utcnow()
         self.certs_uri = "https://www.googleapis.com/oauth2/v1/certs"
+        self.sentry_client = AsyncSentryClient(
+            'https://1fd6fdf70aef439e9fab3221964f66b0:9e0edcbade1749b68582fdc46b73b6d1@app.getsentry.com/69921'
+        )
         self.client_ids = [
             "531566137905-fhljh7kirg7v9kg4019qd6aaob57gd4s.apps.googleusercontent.com",
         ]

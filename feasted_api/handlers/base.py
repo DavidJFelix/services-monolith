@@ -1,11 +1,12 @@
 from typing import Optional
 
+from raven.contrib.tornado import SentryMixin
 from tornado import gen
 from tornado.escape import to_unicode
 from tornado.web import RequestHandler, HTTPError
 
 
-class DefaultHandler(RequestHandler):
+class DefaultHandler(SentryMixin, RequestHandler):
     """ DefaultHandler is a base handler that all of our handlers will inherit from.
 
     It sets up our desired error format, and a default policy for method response when handlers
