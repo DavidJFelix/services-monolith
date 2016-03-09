@@ -7,7 +7,7 @@ from .base import DefaultHandler
 from ..models.allergen import get_allergens
 
 
-class AllergenHandler(DefaultHandler):
+class AllergensHandler(DefaultHandler):
     @gen.coroutine
     def get(self, allergen_id=None):
         db_conn = yield self.db_conn()
@@ -17,5 +17,5 @@ class AllergenHandler(DefaultHandler):
         raise Finish()
 
 
-class AllergensHandler(DefaultHandler):
+class AllergenHandler(DefaultHandler):
     pass
