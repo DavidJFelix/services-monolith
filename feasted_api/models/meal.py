@@ -1,6 +1,7 @@
-import rethinkdb as rdb
+from copy import deepcopy
 from typing import Dict, Optional, Tuple, List
 
+import rethinkdb as rdb
 from tornado import gen
 
 from .base import BaseModel
@@ -45,7 +46,7 @@ class Meal(BaseModel):
         super().__init__(**new_field_values)
 
     def for_rethink(self) -> Dict:
-        dictionary = self.values
+        dictionary = deepcopy(self.values)
         dictionary['location'] = rdb.point(*self.values.get('location', {}).get('coordinates'))
         return dictionary
 
